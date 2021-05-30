@@ -1,0 +1,21 @@
+version: "3.9"
+
+services: 
+  postgres:
+    image: postgres:latest
+    volumes:
+      - swiezePostgres:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/swieze_postgres
+    secrets:
+      - swieze_postgres
+
+secrets:
+  swieze_postgres:
+    file: ./swieze_postgres.txt
+
+volumes:
+  swiezePostgres:
+  
