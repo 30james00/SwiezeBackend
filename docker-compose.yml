@@ -5,16 +5,10 @@ services:
     image: postgres:latest
     volumes:
       - swiezePostgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=swiezeWarzywa
     ports:
       - 5432:5432
-    environment:
-      POSTGRES_PASSWORD_FILE: /run/secrets/swieze_postgres
-    secrets:
-      - swieze_postgres
-
-secrets:
-  swieze_postgres:
-    file: ./swieze_postgres.txt
 
 volumes:
   swiezePostgres:
