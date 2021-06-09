@@ -1,16 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using SwiezeBackend.Helpers;
 
@@ -18,6 +12,7 @@ namespace SwiezeBackend
 {
     public class Startup
     {
+        readonly string ClientOrigin = "_clientOrigin";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -31,6 +26,19 @@ namespace SwiezeBackend
             services.AddDbContext<DataContext>(options =>
                 options.UseNpgsql(Configuration["PostgreSQL"]));
             services.AddDatabaseDeveloperPageExceptionFilter();
+
+            //set up CORS with named policy and middleware (https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-5.0)
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: ClientOrigin,
+                    builder =>
+                    {
+                        builder
+                            .AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                    });
+            });
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -52,6 +60,8 @@ namespace SwiezeBackend
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            
+            app.UseCors(ClientOrigin);
 
             app.UseAuthorization();
 
