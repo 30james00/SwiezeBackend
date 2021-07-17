@@ -6,7 +6,7 @@ namespace SwiezeBackend.Models
     {
         public int UnitTypeId { get; set; }
 
-        [Required] [MaxLength(30)] public string Name { get; set; }
+        [Required] [MaxLength(60)] public string Name { get; set; }
 
         public Product Product { get; set; }
     }
