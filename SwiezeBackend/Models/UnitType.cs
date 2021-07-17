@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace SwiezeBackend.Models
@@ -8,6 +9,6 @@ namespace SwiezeBackend.Models
 
         [Required] [MaxLength(60)] public string Name { get; set; }
 
-        public Product Product { get; set; }
+        public List<Product> Products { get; set; }
     }
 }

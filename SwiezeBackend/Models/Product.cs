@@ -13,8 +13,12 @@ namespace SwiezeBackend.Models
         [Required] public int Unit { get; set; }
 
         [Required] public int Amount { get; set; }
-        
+
+        //relations
         public int UnitTypeId { get; set; }
         public UnitType UnitType { get; set; }
+
+        public int VendorId { get; set; }
+        public Vendor Vendor { get; set; }
     }
 }

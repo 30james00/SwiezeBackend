@@ -9,8 +9,10 @@ namespace SwiezeBackend.Helpers
     public class DataContext : DbContext
     {
         private const int ClientCount = 100;
-        private const int ContactCount = 100;
-        private const int UnitCount = 10;
+        private const int VendorCount = 100;
+        private const int ContactCount = ClientCount + VendorCount;
+        private const int ProductCount = 1000;
+        private const int UnitTypeCount = 10;
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
@@ -50,10 +52,23 @@ namespace SwiezeBackend.Helpers
                 .RuleFor(o => o.HouseNumber, f => f.Address.BuildingNumber())
                 .RuleFor(o => o.FlatNumber, f => $"{f.Random.String(1, 3, '0', '9')}{f.Random.String(0, 1, 'A', 'Z')}");
 
+            var fakeProduct = new Faker<Product>()
+                .RuleFor(o => o.ProductId, f => productIndex++)
+                .RuleFor(o => o.Name, f => f.Commerce.Product())
+                .RuleFor(o => o.Value, f => f.Random.Int(1, 100000))
+                .RuleFor(o => o.Unit, f => f.Random.Int(1, 100000))
+                .RuleFor(o => o.Amount, f => f.Random.Int(1, 100000))
+                .RuleFor(o => o.UnitTypeId, f => f.Random.Int(1, UnitTypeCount))
+                .RuleFor(o => o.VendorId, f => f.Random.Int(1, VendorCount));
 
             var fakeUnitType = new Faker<UnitType>()
                 .RuleFor(o => o.UnitTypeId, f => unitIndex++)
                 .RuleFor(o => o.Name, f => f.Random.Word());
+
+            var fakeVendor = new Faker<Vendor>()
+                .RuleFor(o => o.VendorId, f => vendorIndex)
+                .RuleFor(o => o.Name, f => f.Random.Word())
+                .RuleFor(o => o.ContactId, f => ClientCount + vendorIndex++);
 
             modelBuilder.Entity<Contact>().HasData(
                 fakeContact.GenerateBetween(ContactCount, ContactCount));
@@ -61,8 +76,14 @@ namespace SwiezeBackend.Helpers
             modelBuilder.Entity<Client>().HasData(
                 fakeClient.GenerateBetween(ClientCount, ClientCount));
 
+            modelBuilder.Entity<Vendor>().HasData(
+                fakeVendor.GenerateBetween(VendorCount, VendorCount));
+
             modelBuilder.Entity<UnitType>().HasData(
-                fakeUnitType.GenerateBetween(UnitCount, UnitCount));
+                fakeUnitType.GenerateBetween(UnitTypeCount, UnitTypeCount));
+
+            modelBuilder.Entity<Product>().HasData(
+                fakeProduct.GenerateBetween(ProductCount, ProductCount));
         }
     }
 }
