@@ -9,6 +9,10 @@ namespace SwiezeBackend.Helpers
         {
         }
 
+        public DbSet<Client> Clients { get; set; }
         public DbSet<Contact> Contacts { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<UnitType> UnitTypes { get; set; }
+        public DbSet<Vendor> Vendors { get; set; }
     }
 }

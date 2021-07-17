@@ -9,8 +9,8 @@ using SwiezeBackend.Helpers;
 namespace SwiezeBackend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210717103746_Add Client")]
-    partial class AddClient
+    [Migration("20210717110929_Add Client Vendor Product UnitType")]
+    partial class AddClientVendorProductUnitType
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -45,7 +45,7 @@ namespace SwiezeBackend.Migrations
                     b.HasIndex("ContactId")
                         .IsUnique();
 
-                    b.ToTable("Client");
+                    b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("SwiezeBackend.Models.Contact", b =>
@@ -99,6 +99,55 @@ namespace SwiezeBackend.Migrations
                     b.ToTable("Contacts");
                 });
 
+            modelBuilder.Entity("SwiezeBackend.Models.Product", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<int>("Unit")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UnitTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ProductId");
+
+                    b.HasIndex("UnitTypeId")
+                        .IsUnique();
+
+                    b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("SwiezeBackend.Models.UnitType", b =>
+                {
+                    b.Property<int>("UnitTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.HasKey("UnitTypeId");
+
+                    b.ToTable("UnitTypes");
+                });
+
             modelBuilder.Entity("SwiezeBackend.Models.Vendor", b =>
                 {
                     b.Property<int>("VendorId")
@@ -119,7 +168,7 @@ namespace SwiezeBackend.Migrations
                     b.HasIndex("ContactId")
                         .IsUnique();
 
-                    b.ToTable("Vendor");
+                    b.ToTable("Vendors");
                 });
 
             modelBuilder.Entity("SwiezeBackend.Models.Client", b =>
@@ -131,6 +180,17 @@ namespace SwiezeBackend.Migrations
                         .IsRequired();
 
                     b.Navigation("Contact");
+                });
+
+            modelBuilder.Entity("SwiezeBackend.Models.Product", b =>
+                {
+                    b.HasOne("SwiezeBackend.Models.UnitType", "UnitType")
+                        .WithOne("Product")
+                        .HasForeignKey("SwiezeBackend.Models.Product", "UnitTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UnitType");
                 });
 
             modelBuilder.Entity("SwiezeBackend.Models.Vendor", b =>
@@ -149,6 +209,11 @@ namespace SwiezeBackend.Migrations
                     b.Navigation("Client");
 
                     b.Navigation("Vendor");
+                });
+
+            modelBuilder.Entity("SwiezeBackend.Models.UnitType", b =>
+                {
+                    b.Navigation("Product");
                 });
 #pragma warning restore 612, 618
         }
