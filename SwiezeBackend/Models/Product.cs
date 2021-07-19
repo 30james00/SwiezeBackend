@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace SwiezeBackend.Models
 {
@@ -16,9 +17,11 @@ namespace SwiezeBackend.Models
 
         //relations
         public int UnitTypeId { get; set; }
+        [JsonIgnore]
         public UnitType UnitType { get; set; }
 
         public int VendorId { get; set; }
+        [JsonIgnore]
         public Vendor Vendor { get; set; }
     }
 }
