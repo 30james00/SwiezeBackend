@@ -9,4 +9,12 @@
       <ProjectReference Include="..\Persistence\Persistence.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Contacts" />
+    </ItemGroup>
+
 </Project>
