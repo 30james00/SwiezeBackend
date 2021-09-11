@@ -19,7 +19,7 @@ namespace Application.IntegrationTests
         private static IServiceScopeFactory _scopeFactory;
         private static Checkpoint _checkpoint;
 
-        
+
         public Testing()
         {
             var builder = new ConfigurationBuilder()
@@ -30,7 +30,7 @@ namespace Application.IntegrationTests
             _configuration = builder.Build();
 
             var startup = new Startup(_configuration);
-            
+
             var services = new ServiceCollection();
 
             services.AddSingleton(Mock.Of<IWebHostEnvironment>(w =>
@@ -39,9 +39,9 @@ namespace Application.IntegrationTests
             ));
 
             services.AddLogging();
-            
+
             startup.ConfigureServices(services);
-            
+
             //auth config here
 
             _scopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>();
@@ -54,7 +54,7 @@ namespace Application.IntegrationTests
 
             EnsureDatabase();
         }
-        
+
         private static void EnsureDatabase()
         {
             using var scope = _scopeFactory.CreateScope();
@@ -63,7 +63,7 @@ namespace Application.IntegrationTests
 
             context.Database.Migrate();
         }
-        
+
         public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
         {
             using var scope = _scopeFactory.CreateScope();
@@ -81,9 +81,41 @@ namespace Application.IntegrationTests
 
                 await _checkpoint.Reset(conn);
             }
-            
+
             //auth
             //_currentUserId = null;
+        }
+
+
+        public static async Task<TEntity> FindAsync<TEntity>(params object[] keyValues)
+            where TEntity : class
+        {
+            using var scope = _scopeFactory.CreateScope();
+
+            var context = scope.ServiceProvider.GetService<DataContext>();
+
+            return await context.FindAsync<TEntity>(keyValues);
+        }
+
+        public static async Task AddAsync<TEntity>(TEntity entity)
+            where TEntity : class
+        {
+            using var scope = _scopeFactory.CreateScope();
+
+            var context = scope.ServiceProvider.GetService<DataContext>();
+
+            context.Add(entity);
+
+            await context.SaveChangesAsync();
+        }
+
+        public static async Task<int> CountAsync<TEntity>() where TEntity : class
+        {
+            using var scope = _scopeFactory.CreateScope();
+
+            var context = scope.ServiceProvider.GetService<DataContext>();
+
+            return await context.Set<TEntity>().CountAsync();
         }
     }
 }
