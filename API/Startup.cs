@@ -31,9 +31,9 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(options =>
-                options.UseNpgsql(Configuration["PostgreSQL"]));
+                options.UseNpgsql(Configuration.GetConnectionString("PostgreSQL")));
             //services.AddDatabaseDeveloperPageExceptionFilter();
-            
+
             services.AddControllers();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" }); });
 
