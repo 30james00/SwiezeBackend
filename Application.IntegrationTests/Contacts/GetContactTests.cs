@@ -1,11 +1,13 @@
+using System;
+using Application.Contacts;
 using Xunit;
 
 namespace Application.IntegrationTests.Contacts
 {
-    public class GetContactTests
+    public class GetContactTests : TestBase
     {
         [Fact]
-        public void Success()
+        public async void Success()
         {
             Assert.True(true);
         }

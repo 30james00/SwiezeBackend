@@ -1,11 +1,13 @@
 using System.IO;
 using System.Threading.Tasks;
 using API;
+using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using Npgsql;
 using Persistence;
 using Respawn;
 
@@ -46,6 +48,7 @@ namespace Application.IntegrationTests
 
             _checkpoint = new Checkpoint
             {
+                DbAdapter = DbAdapter.Postgres,
                 TablesToIgnore = new[] { "__EFMigrationsHistory" }
             };
 
@@ -60,10 +63,24 @@ namespace Application.IntegrationTests
 
             context.Database.Migrate();
         }
+        
+        public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
+        {
+            using var scope = _scopeFactory.CreateScope();
+
+            var mediator = scope.ServiceProvider.GetService<ISender>();
+
+            return await mediator.Send(request);
+        }
 
         public static async Task ResetState()
         {
-            await _checkpoint.Reset(_configuration.GetConnectionString("DefaultConnection"));
+            using (var conn = new NpgsqlConnection(_configuration.GetConnectionString("PostgreSQL")))
+            {
+                await conn.OpenAsync();
+
+                await _checkpoint.Reset(conn);
+            }
             
             //auth
             //_currentUserId = null;
