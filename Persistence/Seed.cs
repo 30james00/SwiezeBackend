@@ -23,7 +23,7 @@ namespace Persistence
             
             if (!context.Contacts.Any())
             {
-                var fakeContact = ContactFaker.Create(contactIndex);
+                var fakeContact = ContactFaker.CreateWithId(contactIndex);
                 
                 var contacts = new List<Contact>();
                 contacts.AddRange(fakeContact.GenerateBetween(ContactCount,ContactCount));
