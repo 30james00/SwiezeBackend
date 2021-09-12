@@ -13,5 +13,11 @@ namespace API.Controllers
         {
             return await Mediator.Send(new GetContact.Query(id));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateContact(Contact contact)
+        {
+            return Ok(await Mediator.Send(new CreateContact.Command(contact)));
+        }
     }
 }
