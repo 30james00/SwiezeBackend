@@ -1,17 +1,18 @@
+using System.Threading.Tasks;
 using Application.Contacts;
 using Domain;
 using FluentAssertions;
+using NUnit.Framework;
 using Persistence.Faker;
-using Xunit;
 
 namespace Application.IntegrationTests.Contacts
 {
     using static Testing;
-    
-    public class CreateContactTests: IClassFixture<Testing>
+
+    public class CreateContactTests : TestBase
     {
-        [Fact]
-        public async void CreateNewContact()
+        [Test]
+        public async Task CreateNewContact()
         {
             var fakeContact = ContactFaker.Create().Generate();
 

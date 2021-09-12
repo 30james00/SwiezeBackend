@@ -8,122 +8,118 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Npgsql;
+using NUnit.Framework;
 using Persistence;
 using Respawn;
-using Xunit;
 
 namespace Application.IntegrationTests
 {
-    public class Testing : IAsyncLifetime
-
+    [SetUpFixture]
+    public class Testing
     {
-    private static IConfigurationRoot _configuration;
-    private static IServiceScopeFactory _scopeFactory;
-    private static Checkpoint _checkpoint;
+        private static IConfigurationRoot _configuration;
+        private static IServiceScopeFactory _scopeFactory;
+        private static Checkpoint _checkpoint;
+        private static string _currentUserId;
 
-
-    public Testing()
-    {
-        var builder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", true, true)
-            .AddEnvironmentVariables();
-
-        _configuration = builder.Build();
-
-        var startup = new Startup(_configuration);
-
-        var services = new ServiceCollection();
-
-        services.AddSingleton(Mock.Of<IWebHostEnvironment>(w =>
-            w.EnvironmentName == "Development" &&
-            w.ApplicationName == "API"
-        ));
-
-        services.AddLogging();
-
-        startup.ConfigureServices(services);
-
-        //auth config here
-
-        _scopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>();
-
-        EnsureDatabase();
-
-        _checkpoint = new Checkpoint
+        [OneTimeSetUp]
+        public void RunBeforeAnyTest()
         {
-            DbAdapter = DbAdapter.Postgres,
-            TablesToIgnore = new[] { "__EFMigrationsHistory" }
-        };
-    }
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true, true)
+                .AddEnvironmentVariables();
 
-    private static void EnsureDatabase()
-    {
-        using var scope = _scopeFactory.CreateScope();
+            _configuration = builder.Build();
 
-        var context = scope.ServiceProvider.GetService<DataContext>();
+            var startup = new Startup(_configuration);
 
-        context.Database.Migrate();
-    }
+            var services = new ServiceCollection();
 
-    public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
-    {
-        using var scope = _scopeFactory.CreateScope();
+            services.AddSingleton(Mock.Of<IWebHostEnvironment>(w =>
+                w.EnvironmentName == "Development" &&
+                w.ApplicationName == "API"
+            ));
 
-        var mediator = scope.ServiceProvider.GetService<ISender>();
+            services.AddLogging();
 
-        return await mediator.Send(request);
-    }
+            startup.ConfigureServices(services);
 
-    public static async Task<TEntity> FindAsync<TEntity>(params object[] keyValues)
-        where TEntity : class
-    {
-        using var scope = _scopeFactory.CreateScope();
+            //auth config here
 
-        var context = scope.ServiceProvider.GetService<DataContext>();
+            _scopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>();
 
-        return await context.FindAsync<TEntity>(keyValues);
-    }
-
-    public static async Task<TEntity> AddAsync<TEntity>(TEntity entity)
-        where TEntity : class
-    {
-        using var scope = _scopeFactory.CreateScope();
-
-        var context = scope.ServiceProvider.GetService<DataContext>();
-
-        var result = context.Add(entity);
-
-        await context.SaveChangesAsync();
-
-        return result.Entity;
-    }
-
-    public static async Task<int> CountAsync<TEntity>() where TEntity : class
-    {
-        using var scope = _scopeFactory.CreateScope();
-
-        var context = scope.ServiceProvider.GetService<DataContext>();
-
-        return await context.Set<TEntity>().CountAsync();
-    }
-
-    public async Task InitializeAsync()
-    {
-        using (var conn = new NpgsqlConnection(_configuration.GetConnectionString("PostgreSQL")))
-        {
-            await conn.OpenAsync();
-
-            await _checkpoint.Reset(conn);
+            _checkpoint = new Checkpoint
+            {
+                DbAdapter = DbAdapter.Postgres,
+                TablesToIgnore = new[] { "__EFMigrationsHistory" }
+            };
+            
+            EnsureDatabase();
         }
 
-        //auth
-        //_currentUserId = null;
-    }
+        private static void EnsureDatabase()
+        {
+            using var scope = _scopeFactory.CreateScope();
 
-    public Task DisposeAsync()
-    {
-        return Task.CompletedTask;
-    }
+            var context = scope.ServiceProvider.GetService<DataContext>();
+
+            context.Database.Migrate();
+        }
+
+        public static async Task ResetState()
+        {
+            using (var conn = new NpgsqlConnection(_configuration.GetConnectionString("PostgreSQL")))
+            {
+                await conn.OpenAsync();
+
+                await _checkpoint.Reset(conn);
+            }
+            
+            //auth
+            //_currentUserId = null;
+        }
+
+        public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
+        {
+            using var scope = _scopeFactory.CreateScope();
+
+            var mediator = scope.ServiceProvider.GetService<ISender>();
+
+            return await mediator.Send(request);
+        }
+
+        public static async Task<TEntity> FindAsync<TEntity>(params object[] keyValues)
+            where TEntity : class
+        {
+            using var scope = _scopeFactory.CreateScope();
+
+            var context = scope.ServiceProvider.GetService<DataContext>();
+
+            return await context.FindAsync<TEntity>(keyValues);
+        }
+
+        public static async Task<TEntity> AddAsync<TEntity>(TEntity entity)
+            where TEntity : class
+        {
+            using var scope = _scopeFactory.CreateScope();
+
+            var context = scope.ServiceProvider.GetService<DataContext>();
+
+            var result = context.Add(entity);
+
+            await context.SaveChangesAsync();
+
+            return result.Entity;
+        }
+
+        public static async Task<int> CountAsync<TEntity>() where TEntity : class
+        {
+            using var scope = _scopeFactory.CreateScope();
+
+            var context = scope.ServiceProvider.GetService<DataContext>();
+
+            return await context.Set<TEntity>().CountAsync();
+        }
     }
 }
