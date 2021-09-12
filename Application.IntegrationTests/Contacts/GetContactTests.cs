@@ -10,7 +10,7 @@ namespace Application.IntegrationTests.Contacts
 {
     using static Testing;
 
-    public class GetContactTests : TestBase
+    public class GetContactTests : IClassFixture<Testing>
     {
         [Fact]
         public async void GetExistingContact()

@@ -8,7 +8,7 @@ namespace Application.IntegrationTests.Contacts
 {
     using static Testing;
     
-    public class CreateContactTests: TestBase
+    public class CreateContactTests: IClassFixture<Testing>
     {
         [Fact]
         public async void CreateNewContact()
