@@ -75,12 +75,6 @@ namespace Application.IntegrationTests
         return await mediator.Send(request);
     }
 
-    public static async Task ResetState()
-    {
-
-    }
-
-
     public static async Task<TEntity> FindAsync<TEntity>(params object[] keyValues)
         where TEntity : class
     {
@@ -91,16 +85,18 @@ namespace Application.IntegrationTests
         return await context.FindAsync<TEntity>(keyValues);
     }
 
-    public static async Task AddAsync<TEntity>(TEntity entity)
+    public static async Task<TEntity> AddAsync<TEntity>(TEntity entity)
         where TEntity : class
     {
         using var scope = _scopeFactory.CreateScope();
 
         var context = scope.ServiceProvider.GetService<DataContext>();
 
-        context.Add(entity);
+        var result = context.Add(entity);
 
         await context.SaveChangesAsync();
+
+        return result.Entity;
     }
 
     public static async Task<int> CountAsync<TEntity>() where TEntity : class

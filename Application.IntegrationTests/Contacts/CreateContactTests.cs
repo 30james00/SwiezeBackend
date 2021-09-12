@@ -13,7 +13,7 @@ namespace Application.IntegrationTests.Contacts
         [Fact]
         public async void CreateNewContact()
         {
-            var fakeContact = ContactFaker.Create(1).Generate();
+            var fakeContact = ContactFaker.Create().Generate();
 
             var command = new CreateContact.Command(fakeContact);
 

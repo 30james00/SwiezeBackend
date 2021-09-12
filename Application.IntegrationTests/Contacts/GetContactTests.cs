@@ -15,11 +15,11 @@ namespace Application.IntegrationTests.Contacts
         [Fact]
         public async void GetExistingContact()
         {
-            var fakeContact = ContactFaker.Create(1).Generate();
+            var fakeContact = ContactFaker.Create().Generate();
 
-            await AddAsync(fakeContact);
+            var fakeContactId = (await AddAsync(fakeContact)).Id;
 
-            var query = new GetContact.Query(GuidHelper.ToGuid(1));
+            var query = new GetContact.Query(fakeContactId);
 
             var result = await SendAsync(query);
 
