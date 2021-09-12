@@ -1,10 +1,9 @@
-using System;
+using System.Threading.Tasks;
 using Application.Contacts;
 using Domain;
 using FluentAssertions;
-using Persistence;
+using NUnit.Framework;
 using Persistence.Faker;
-using Xunit;
 
 namespace Application.IntegrationTests.Contacts
 {
@@ -12,14 +11,14 @@ namespace Application.IntegrationTests.Contacts
 
     public class GetContactTests : TestBase
     {
-        [Fact]
-        public async void GetExistingContact()
+        [Test]
+        public async Task GetExistingContact()
         {
-            var fakeContact = ContactFaker.Create(1).Generate();
+            var fakeContact = ContactFaker.Create().Generate();
 
-            await AddAsync(fakeContact);
+            var fakeContactId = (await AddAsync(fakeContact)).Id;
 
-            var query = new GetContact.Query(GuidHelper.ToGuid(1));
+            var query = new GetContact.Query(fakeContactId);
 
             var result = await SendAsync(query);
 
