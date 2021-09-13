@@ -22,10 +22,14 @@ namespace Application.IntegrationTests.Contacts
             var fakeContactId = (await AddAsync(fakeContact)).Id;
 
             var command = new EditContact.Command(fakeContactId, editedContact);
+
             var result = await SendAsync(command);
 
-            result.Should().BeOfType<Contact>();
-            result.Should().BeEquivalentTo(editedContact);
+            var check = await FindAsync<Contact>(fakeContactId);
+
+            editedContact.Id = fakeContactId;
+            check.Should().BeOfType<Contact>();
+            check.Should().BeEquivalentTo(editedContact);
         }
     }
 }
