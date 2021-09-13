@@ -20,7 +20,6 @@ namespace Application.IntegrationTests
         private static IConfigurationRoot _configuration;
         private static IServiceScopeFactory _scopeFactory;
         private static Checkpoint _checkpoint;
-        private static string _currentUserId;
 
         [OneTimeSetUp]
         public void RunBeforeAnyTest()

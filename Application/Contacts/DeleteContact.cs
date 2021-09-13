@@ -20,9 +20,15 @@ namespace Application.Contacts
                 _context = context;
             }
 
-            public Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                throw new NotImplementedException();
+                var contact = await _context.Contacts.FindAsync(request.id);
+
+                _context.Remove(contact);
+
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return Unit.Value;
             }
         }
     }

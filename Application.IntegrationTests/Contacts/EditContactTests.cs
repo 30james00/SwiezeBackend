@@ -3,7 +3,6 @@ using Application.Contacts;
 using Domain;
 using FluentAssertions;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using Persistence.Faker;
 
 namespace Application.IntegrationTests.Contacts
