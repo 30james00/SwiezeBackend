@@ -25,5 +25,11 @@ namespace API.Controllers
         {
             return Ok(await Mediator.Send(new EditContact.Command(contact)));
         }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteContact(Guid id)
+        {
+            return Ok(await Mediator.Send(new DeleteContact.Command(id)));
+        }
     }
 }
