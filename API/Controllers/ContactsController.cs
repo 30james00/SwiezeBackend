@@ -19,5 +19,11 @@ namespace API.Controllers
         {
             return Ok(await Mediator.Send(new CreateContact.Command(contact)));
         }
+
+        [HttpPatch("{id:guid}")]
+        public async Task<IActionResult> EditContact(Guid id, Contact contact)
+        {
+            return Ok(await Mediator.Send(new EditContact.Command(contact)));
+        }
     }
 }
