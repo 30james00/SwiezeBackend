@@ -10,5 +10,12 @@ namespace Persistence
         }
 
         public DbSet<Contact> Contacts { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(EntityTypeConfigurationsEntrypoint).Assembly);
+            
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
