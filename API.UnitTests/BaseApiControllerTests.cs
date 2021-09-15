@@ -22,7 +22,7 @@ namespace API.UnitTests
         public void HandleResult_SuccessWithValue()
         {
             var contact = ContactFaker.Create().Generate();
-            var result = HandleResult<Contact>(ApiResult<Contact>.Success(contact));
+            var result = HandleResult(ApiResult<Contact>.Success(contact));
 
             result.Should().BeOfType<OkObjectResult>();
             result.As<OkObjectResult>().Value.Should().BeOfType<Contact>();
