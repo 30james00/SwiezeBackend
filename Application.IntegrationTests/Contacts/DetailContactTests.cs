@@ -9,7 +9,7 @@ namespace Application.IntegrationTests.Contacts
 {
     using static Testing;
 
-    public class GetContactTests : TestBase
+    public class DetailContactTests : TestBase
     {
         [Test]
         public async Task GetExistingContact()
@@ -18,7 +18,7 @@ namespace Application.IntegrationTests.Contacts
 
             var fakeContactId = (await AddAsync(fakeContact)).Id;
 
-            var query = new GetContact.Query(fakeContactId);
+            var query = new DetailContact.Query(fakeContactId);
 
             var result = await SendAsync(query);
 

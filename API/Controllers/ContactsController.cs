@@ -8,10 +8,10 @@ namespace API.Controllers
 {
     public class ContactsController : BaseApiController
     {
-        [HttpGet]
-        public async Task<ActionResult<Contact>> GetContact(Guid id)
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<Contact>> DetailContact(Guid id)
         {
-            return await Mediator.Send(new GetContact.Query(id));
+            return await Mediator.Send(new DetailContact.Query(id));
         }
 
         [HttpPost]

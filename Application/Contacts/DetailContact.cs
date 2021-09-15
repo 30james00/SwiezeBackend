@@ -7,7 +7,7 @@ using Persistence;
 
 namespace Application.Contacts
 {
-    public class GetContact
+    public class DetailContact
     {
         public record Query(Guid Id) : IRequest<Contact>;
         
