@@ -11,13 +11,13 @@ namespace API.Controllers
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<Contact>> DetailContact(Guid id)
         {
-            return await Mediator.Send(new DetailContact.Query(id));
+            return HandleResult(await Mediator.Send(new DetailContact.Query(id)));
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateContact(Contact contact)
         {
-            return Ok(await Mediator.Send(new CreateContact.Command(contact)));
+            return HandleResult(await Mediator.Send(new CreateContact.Command(contact)));
         }
 
         [HttpPatch("{id:guid}")]
