@@ -3,6 +3,7 @@ using Application.Contacts;
 using Domain;
 using FluentAssertions;
 using NUnit.Framework;
+using Persistence;
 using Persistence.Faker;
 
 namespace Application.IntegrationTests.Contacts
@@ -29,6 +30,20 @@ namespace Application.IntegrationTests.Contacts
             editedContact.Id = fakeContactId;
             check.Should().BeOfType<Contact>();
             check.Should().BeEquivalentTo(editedContact);
+
+            result.IsSuccess.Should().BeTrue();
+        }
+        
+        [Test]
+        public async Task EditNonExistingContact()
+        {
+            var faker = ContactFaker.Create();
+            var fakeContact = faker.Generate();
+            
+            var command = new EditContact.Command(GuidHelper.ToGuid(1), fakeContact);
+            var result = await SendAsync(command);
+
+            result.Should().BeNull();
         }
     }
 }

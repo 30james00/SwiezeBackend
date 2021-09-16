@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Application.Contacts;
+using Application.Core;
 using Domain;
 using FluentAssertions;
 using NUnit.Framework;
@@ -20,7 +21,7 @@ namespace Application.IntegrationTests.Contacts
 
             var result = await SendAsync(command);
 
-            var contact = await FindAsync<Contact>(result.Id);
+            var contact = await FindAsync<Contact>(result.Value.Id);
 
             contact.Should().BeOfType<Contact>();
             contact.Should().BeEquivalentTo(fakeContact);

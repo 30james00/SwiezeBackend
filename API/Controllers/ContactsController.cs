@@ -8,28 +8,28 @@ namespace API.Controllers
 {
     public class ContactsController : BaseApiController
     {
-        [HttpGet]
-        public async Task<ActionResult<Contact>> GetContact(Guid id)
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<Contact>> DetailContact(Guid id)
         {
-            return await Mediator.Send(new GetContact.Query(id));
+            return HandleResult(await Mediator.Send(new DetailContact.Query(id)));
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateContact(Contact contact)
         {
-            return Ok(await Mediator.Send(new CreateContact.Command(contact)));
+            return HandleResult(await Mediator.Send(new CreateContact.Command(contact)));
         }
 
         [HttpPatch("{id:guid}")]
         public async Task<IActionResult> EditContact(Guid id, Contact contact)
         {
-            return Ok(await Mediator.Send(new EditContact.Command(id, contact)));
+            return HandleResult(await Mediator.Send(new EditContact.Command(id, contact)));
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteContact(Guid id)
         {
-            return Ok(await Mediator.Send(new DeleteContact.Command(id)));
+            return HandleResult(await Mediator.Send(new DeleteContact.Command(id)));
         }
     }
 }
