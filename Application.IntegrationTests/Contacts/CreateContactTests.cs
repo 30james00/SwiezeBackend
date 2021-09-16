@@ -26,19 +26,5 @@ namespace Application.IntegrationTests.Contacts
             contact.Should().BeOfType<Contact>();
             contact.Should().BeEquivalentTo(fakeContact);
         }
-
-        [Test]
-        public async Task Failure_DuplicateContactId()
-        {
-            var fakeContact = ContactFaker.Create().Generate();
-
-            var command = new CreateContact.Command(fakeContact);
-
-            await SendAsync(command);
-            var result = await SendAsync(command);
-
-            result.Should().BeOfType<ApiResult<Contact>>();
-            result.Error.Should().Be("Failed to create new Contact");
-        }
     }
 }
