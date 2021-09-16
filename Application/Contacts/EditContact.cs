@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Core;
 using AutoMapper;
 using Domain;
 using MediatR;
@@ -10,9 +11,9 @@ namespace Application.Contacts
 {
     public class EditContact
     {
-        public record Command(Guid Id, Contact Contact) : IRequest;
+        public record Command(Guid Id, Contact Contact) : IRequest<ApiResult<Unit>>;
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<Command, ApiResult<Unit>>
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
@@ -23,15 +24,19 @@ namespace Application.Contacts
                 _mapper = mapper;
             }
 
-            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<ApiResult<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var contact = await _context.Contacts.FindAsync(request.Id);
 
+                if (contact == null) return null;
+
                 _mapper.Map(request.Contact, contact);
 
-                await _context.SaveChangesAsync(cancellationToken);
-                
-                return Unit.Value;
+                var result = await _context.SaveChangesAsync(cancellationToken) > 0;
+
+                return result
+                    ? ApiResult<Unit>.Success(Unit.Value)
+                    : ApiResult<Unit>.Failure("Failed to edit the Contact");
             }
         }
     }

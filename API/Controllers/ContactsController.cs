@@ -23,13 +23,13 @@ namespace API.Controllers
         [HttpPatch("{id:guid}")]
         public async Task<IActionResult> EditContact(Guid id, Contact contact)
         {
-            return Ok(await Mediator.Send(new EditContact.Command(id, contact)));
+            return HandleResult(await Mediator.Send(new EditContact.Command(id, contact)));
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteContact(Guid id)
         {
-            return Ok(await Mediator.Send(new DeleteContact.Command(id)));
+            return HandleResult(await Mediator.Send(new DeleteContact.Command(id)));
         }
     }
 }
