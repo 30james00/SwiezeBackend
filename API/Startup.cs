@@ -1,8 +1,12 @@
+using System;
+using System.IO;
+using System.Reflection;
 using API.Middleware;
 using Application;
 using Application.Core;
 using FluentValidation.AspNetCore;
 using MediatR;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +38,12 @@ namespace API
             {
                 config.RegisterValidatorsFromAssemblyContaining<FluentValidationEntrypoint>();
             });
-            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" }); });
+            
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
+            });
+            services.AddFluentValidationRulesToSwagger();
 
             services.AddMediatR(typeof(MediatREntrypoint).Assembly);
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
