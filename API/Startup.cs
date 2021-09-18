@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using API.Extensions;
 using API.Middleware;
 using Application;
 using Application.Core;
@@ -30,23 +31,12 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("PostgreSQL")));
-            //services.AddDatabaseDeveloperPageExceptionFilter();
-
             services.AddControllers().AddFluentValidation(config =>
             {
                 config.RegisterValidatorsFromAssemblyContaining<FluentValidationEntrypoint>();
             });
-            
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
-            });
-            services.AddFluentValidationRulesToSwagger();
 
-            services.AddMediatR(typeof(MediatREntrypoint).Assembly);
-            services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+            services.AddApplicationServices(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
