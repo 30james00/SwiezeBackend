@@ -3,7 +3,7 @@ using Domain;
 
 namespace Persistence.Faker
 {
-    public class ContactFaker
+    public static class ContactFaker
     {
         public static Faker<Contact> Create()
         {
