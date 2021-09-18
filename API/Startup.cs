@@ -1,21 +1,12 @@
-using System;
-using System.IO;
-using System.Reflection;
 using API.Extensions;
 using API.Middleware;
 using Application;
-using Application.Core;
 using FluentValidation.AspNetCore;
-using MediatR;
-using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using Persistence;
 
 namespace API
 {
@@ -37,6 +28,7 @@ namespace API
             });
 
             services.AddApplicationServices(Configuration);
+            services.AddIdentityServices(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
