@@ -1,3 +1,4 @@
+using API.Services;
 using Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +16,7 @@ namespace API.Extensions
                 .AddSignInManager<SignInManager<Account>>();
 
             services.AddAuthentication();
+            services.AddScoped<ITokenService, TokenService>();
 
             return services;
         }

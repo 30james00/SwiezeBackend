@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using API.Controllers;
 using API.DTOs;
+using API.Services;
 using Domain;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authentication;
@@ -18,6 +19,8 @@ namespace API.UnitTests
 {
     public class AccountControllerTests
     {
+        private Mock<ITokenService> _tokenService = new Mock<ITokenService>();
+
         public class FakeUserManager : UserManager<Account>
         {
             public FakeUserManager()
@@ -48,6 +51,13 @@ namespace API.UnitTests
             }
         }
 
+        [SetUp]
+        public void SetUp()
+        {
+            _tokenService.Setup(x => x.CreateToken(It.IsAny<Account>())).Returns("Token");
+        }
+
+
         [Test]
         public async Task Login_ValidData()
         {
@@ -69,7 +79,8 @@ namespace API.UnitTests
                     x.CheckPasswordSignInAsync(It.IsAny<Account>(), It.IsAny<string>(), It.IsAny<bool>()))
                 .ReturnsAsync(SignInResult.Success);
 
-            var accountController = new AccountController(userManager.Object, signInManager.Object);
+            var accountController =
+                new AccountController(userManager.Object, signInManager.Object, _tokenService.Object);
 
             var result = await accountController.Login(loginDto);
 
@@ -92,13 +103,14 @@ namespace API.UnitTests
 
             var signInManager = new Mock<FakeSignInManager>();
 
-            var accountController = new AccountController(userManager.Object, signInManager.Object);
+            var accountController =
+                new AccountController(userManager.Object, signInManager.Object, _tokenService.Object);
 
             var result = await accountController.Login(loginDto);
 
             result.Result.Should().BeOfType<UnauthorizedResult>();
         }
-        
+
         [Test]
         public async Task Login_InvalidPassword()
         {
@@ -120,7 +132,8 @@ namespace API.UnitTests
                     x.CheckPasswordSignInAsync(It.IsAny<Account>(), It.IsAny<string>(), It.IsAny<bool>()))
                 .ReturnsAsync(SignInResult.Failed);
 
-            var accountController = new AccountController(userManager.Object, signInManager.Object);
+            var accountController =
+                new AccountController(userManager.Object, signInManager.Object, _tokenService.Object);
 
             var result = await accountController.Login(loginDto);
 
