@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Controllers;
 using API.DTOs;
@@ -19,6 +20,8 @@ namespace API.UnitTests
 {
     public class AccountControllerTests
     {
+        private Mock<FakeUserManager> _userManager = new Mock<FakeUserManager>();
+        private Mock<FakeSignInManager> _signInManager = new Mock<FakeSignInManager>();
         private Mock<ITokenService> _tokenService = new Mock<ITokenService>();
 
         public class FakeUserManager : UserManager<Account>
@@ -51,6 +54,11 @@ namespace API.UnitTests
             }
         }
 
+        private AccountController GetAccountController()
+        {
+            return new AccountController(_userManager.Object, _signInManager.Object, _tokenService.Object);
+        }
+
         [SetUp]
         public void SetUp()
         {
@@ -67,22 +75,17 @@ namespace API.UnitTests
                 Password = "Pa$$w0rd",
             };
 
-            var userManager = new Mock<FakeUserManager>();
-            userManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+            _userManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
                 .ReturnsAsync(new Account
                 {
                     UserName = "User",
                 });
 
-            var signInManager = new Mock<FakeSignInManager>();
-            signInManager.Setup(x =>
+            _signInManager.Setup(x =>
                     x.CheckPasswordSignInAsync(It.IsAny<Account>(), It.IsAny<string>(), It.IsAny<bool>()))
                 .ReturnsAsync(SignInResult.Success);
 
-            var accountController =
-                new AccountController(userManager.Object, signInManager.Object, _tokenService.Object);
-
-            var result = await accountController.Login(loginDto);
+            var result = await GetAccountController().Login(loginDto);
 
             result.Value.Username.Should().Be("User");
             result.Value.Token.Should().Be("Token");
@@ -97,16 +100,10 @@ namespace API.UnitTests
                 Password = "Pa$$w0rd",
             };
 
-            var userManager = new Mock<FakeUserManager>();
-            userManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+            _userManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
                 .ReturnsAsync((Account)null);
 
-            var signInManager = new Mock<FakeSignInManager>();
-
-            var accountController =
-                new AccountController(userManager.Object, signInManager.Object, _tokenService.Object);
-
-            var result = await accountController.Login(loginDto);
+            var result = await GetAccountController().Login(loginDto);
 
             result.Result.Should().BeOfType<UnauthorizedResult>();
         }
@@ -120,22 +117,17 @@ namespace API.UnitTests
                 Password = "Pa$$w0rd",
             };
 
-            var userManager = new Mock<FakeUserManager>();
-            userManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+            _userManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
                 .ReturnsAsync(new Account
                 {
                     UserName = "User",
                 });
 
-            var signInManager = new Mock<FakeSignInManager>();
-            signInManager.Setup(x =>
+            _signInManager.Setup(x =>
                     x.CheckPasswordSignInAsync(It.IsAny<Account>(), It.IsAny<string>(), It.IsAny<bool>()))
                 .ReturnsAsync(SignInResult.Failed);
 
-            var accountController =
-                new AccountController(userManager.Object, signInManager.Object, _tokenService.Object);
-
-            var result = await accountController.Login(loginDto);
+            var result = await GetAccountController().Login(loginDto);
 
             result.Result.Should().BeOfType<UnauthorizedResult>();
         }
