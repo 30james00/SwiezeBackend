@@ -14,9 +14,23 @@ namespace API.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
+
             services.AddDbContext<DataContext>(options =>
                 options.UseNpgsql(config.GetConnectionString("PostgreSQL")));
             services.AddDatabaseDeveloperPageExceptionFilter();
+
+            //set up CORS with named policy and middleware (https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-5.0)
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: Startup.ClientOrigin,
+                    builder =>
+                    {
+                        builder
+                            .AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                    });
+            });
 
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" }); });
             services.AddFluentValidationRulesToSwagger();
