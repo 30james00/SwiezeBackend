@@ -20,9 +20,9 @@ namespace API.UnitTests
 {
     public class AccountControllerTests
     {
-        private Mock<FakeUserManager> _userManager = new Mock<FakeUserManager>();
-        private Mock<FakeSignInManager> _signInManager = new Mock<FakeSignInManager>();
-        private Mock<ITokenService> _tokenService = new Mock<ITokenService>();
+        private readonly Mock<FakeUserManager> _userManager = new Mock<FakeUserManager>();
+        private readonly Mock<FakeSignInManager> _signInManager = new Mock<FakeSignInManager>();
+        private readonly Mock<ITokenService> _tokenService = new Mock<ITokenService>();
 
         public class FakeUserManager : UserManager<Account>
         {
