@@ -12,6 +12,8 @@ namespace API
 {
     public class Startup
     {
+        public static readonly string ClientOrigin = "_clientOrigin";
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -45,6 +47,8 @@ namespace API
             // app.UseHttpsRedirection();
 
             app.UseRouting();
+            
+            app.UseCors(ClientOrigin);
 
             app.UseAuthentication();
             app.UseAuthorization();
