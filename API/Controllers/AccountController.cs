@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Services;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -35,11 +37,7 @@ namespace API.Controllers
 
             if (result.Succeeded)
             {
-                return new AccountDto
-                {
-                    Username = user.UserName,
-                    Token = _tokenService.CreateToken(user),
-                };
+                return CreateAccountDto(user);
             }
 
             return Unauthorized();
@@ -68,14 +66,28 @@ namespace API.Controllers
 
             if (result.Succeeded)
             {
-                return new AccountDto
-                {
-                    Username = user.UserName,
-                    Token = _tokenService.CreateToken(user),
-                };
+                return CreateAccountDto(user);
             }
 
             return BadRequest("Problem registering user");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<AccountDto>> GetCurrentUser()
+        {
+            var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+
+            return CreateAccountDto(user);
+        }
+
+        private AccountDto CreateAccountDto(Account account)
+        {
+            return new AccountDto
+            {
+                Username = account.UserName,
+                Token = _tokenService.CreateToken(account),
+            };
         }
     }
 }
