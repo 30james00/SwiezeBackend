@@ -25,6 +25,7 @@ namespace Application.IntegrationTests
         public void RunBeforeAnyTest()
         {
             var builder = new ConfigurationBuilder()
+                .AddUserSecrets<Testing>()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.Development.json", true, true)
                 .AddEnvironmentVariables();
@@ -53,7 +54,7 @@ namespace Application.IntegrationTests
                 DbAdapter = DbAdapter.Postgres,
                 TablesToIgnore = new[] { "__EFMigrationsHistory" }
             };
-            
+
             EnsureDatabase();
         }
 
@@ -74,7 +75,7 @@ namespace Application.IntegrationTests
 
                 await _checkpoint.Reset(conn);
             }
-            
+
             //auth
             //_currentUserId = null;
         }
