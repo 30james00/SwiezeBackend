@@ -23,5 +23,11 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+      env:
+        ConnectionStrings:PostgreSQL: ${{secrets.POSTGRES}}
+        TokenKey: ${{secrets.TOKEN_KEY}}
     - name: Test
       run: dotnet test --no-build --verbosity normal
+      env:
+        ConnectionStrings:PostgreSQL: ${{secrets.TEST_POSTGRES}}
+        TokenKey: ${{secrets.TOKEN_KEY}}
