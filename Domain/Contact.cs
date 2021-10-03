@@ -5,7 +5,7 @@ namespace Domain
     public class Contact
     {
         public Guid Id { get; set; }
-        
+
         public string Mail { get; set; }
 
         public string Phone { get; set; }
@@ -21,5 +21,8 @@ namespace Domain
         public string HouseNumber { get; set; }
 
         public string FlatNumber { get; set; }
+
+        public Vendor Vendor { get; set; }
+        public Guid VendorId { get; set; }
     }
 }
