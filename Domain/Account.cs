@@ -4,5 +4,6 @@ namespace Domain
 {
     public class Account : IdentityUser
     {
+        public Vendor Vendor { get; set; }
     }
 }
