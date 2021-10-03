@@ -23,6 +23,6 @@ namespace Domain
         public string FlatNumber { get; set; }
 
         public Vendor Vendor { get; set; }
-        public Guid VendorId { get; set; }
+        public Guid? VendorId { get; set; }
     }
 }
