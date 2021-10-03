@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence;
@@ -9,9 +10,10 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20211003091357_Add Vendor")]
+    partial class AddVendor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,7 +125,7 @@ namespace Persistence.Migrations
                         .HasMaxLength(120)
                         .HasColumnType("character varying(120)");
 
-                    b.Property<Guid?>("VendorId")
+                    b.Property<Guid>("VendorId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Voivodeship")
@@ -289,7 +291,9 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Vendor", "Vendor")
                         .WithOne("Contact")
-                        .HasForeignKey("Domain.Contact", "VendorId");
+                        .HasForeignKey("Domain.Contact", "VendorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Vendor");
                 });

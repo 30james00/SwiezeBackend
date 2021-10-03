@@ -12,7 +12,7 @@ namespace Persistence
 {
     public class Seed
     {
-        private const int ClientCount = 100;
+        private const int ClientCount = 0;
         private const int VendorCount = 100;
         private const int ContactCount = ClientCount + VendorCount;
         private const int AccountCount = 10;
@@ -22,6 +22,7 @@ namespace Persistence
             Randomizer.Seed = new Random(58177474);
 
             var contactIndex = 1;
+            var vendorIndex = 1;
 
             if (!userManager.Users.Any())
             {
@@ -36,9 +37,20 @@ namespace Persistence
                 }
             }
 
+            if (!context.Vendors.Any())
+            {
+                var vendorFaker = VendorFaker.CreateWithId(vendorIndex);
+                
+                var vendors = new List<Vendor>();
+                vendors.AddRange(vendorFaker.GenerateBetween(VendorCount, VendorCount));
+                
+                await context.Vendors.AddRangeAsync(vendors);
+                await context.SaveChangesAsync();
+            }
+
             if (!context.Contacts.Any())
             {
-                var contactFaker = ContactFaker.CreateWithId(contactIndex);
+                var contactFaker = ContactFaker.CreateWithId(contactIndex, contactIndex);
 
                 var contacts = new List<Contact>();
                 contacts.AddRange(contactFaker.GenerateBetween(ContactCount, ContactCount));
