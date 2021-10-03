@@ -1,3 +1,4 @@
+using System;
 using Bogus;
 using Domain;
 
@@ -5,7 +6,7 @@ namespace Persistence.Faker
 {
     public static class ContactFaker
     {
-        public static Faker<Contact> Create()
+        public static Faker<Contact> Create(int vendor = -1)
         {
             return new Faker<Contact>()
                 .RuleFor(o => o.Mail, f => f.Internet.Email())
@@ -15,12 +16,13 @@ namespace Persistence.Faker
                 .RuleFor(o => o.City, f => f.Address.City())
                 .RuleFor(o => o.Street, f => f.Address.StreetName())
                 .RuleFor(o => o.HouseNumber, f => f.Address.BuildingNumber())
-                .RuleFor(o => o.FlatNumber, f => $"{f.Random.String(1, 3, '0', '9')}{f.Random.String(0, 1, 'A', 'Z')}");
+                .RuleFor(o => o.FlatNumber, f => $"{f.Random.String(1, 3, '0', '9')}{f.Random.String(0, 1, 'A', 'Z')}")
+                .RuleFor(o => o.VendorId, f => vendor > -1 ? GuidHelper.ToGuid(vendor++) : null);
         }
 
-        public static Faker<Contact> CreateWithId(int contactIndex)
+        public static Faker<Contact> CreateWithId(int contactIndex, int vendor = -1)
         {
-            return Create()
+            return Create(vendor)
                 .RuleFor(o => o.Id, f => GuidHelper.ToGuid(contactIndex++));
         }
     }
