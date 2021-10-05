@@ -6,6 +6,7 @@ using Bogus;
 using Bogus.Extensions;
 using Domain;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Faker;
 
 namespace Persistence
@@ -13,9 +14,9 @@ namespace Persistence
     public class Seed
     {
         private const int ClientCount = 0;
-        private const int VendorCount = 100;
+        private const int VendorCount = 10;
         private const int ContactCount = ClientCount + VendorCount;
-        private const int AccountCount = 10;
+        private const int AccountCount = ClientCount + VendorCount;
 
         public static async Task SeedData(DataContext context, UserManager<Account> userManager)
         {
@@ -39,11 +40,11 @@ namespace Persistence
 
             if (!context.Vendors.Any())
             {
-                var vendorFaker = VendorFaker.CreateWithId(vendorIndex);
-                
+                var vendorFaker = VendorFaker.CreateWithAccount(vendorIndex, userManager.Users.ToList());
+
                 var vendors = new List<Vendor>();
                 vendors.AddRange(vendorFaker.GenerateBetween(VendorCount, VendorCount));
-                
+
                 await context.Vendors.AddRangeAsync(vendors);
                 await context.SaveChangesAsync();
             }
