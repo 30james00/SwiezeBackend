@@ -9,7 +9,7 @@ namespace API.Controllers
     public class ContactsController : BaseApiController
     {
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<Contact>> DetailContact(Guid id)
+        public async Task<IActionResult> DetailContact(Guid id)
         {
             return HandleResult(await Mediator.Send(new DetailContact.Query(id)));
         }

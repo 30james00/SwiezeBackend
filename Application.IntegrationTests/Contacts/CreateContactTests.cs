@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Application.Contacts;
-using Application.Core;
 using Domain;
 using FluentAssertions;
 using NUnit.Framework;

@@ -25,18 +25,17 @@ namespace Application.IntegrationTests.Contacts
 
             var result = await SendAsync(query);
 
-            result.Value.Should().BeOfType<Contact>();
-            result.Value.Should().BeEquivalentTo(fakeContact);
+            result.Value.Should().BeOfType<ContactDto>();
+            result.Value.Should()
+                .BeEquivalentTo(fakeContact, opt => opt.ExcludingMissingMembers());
         }
 
         [Test]
         public async Task DetailsOfNonExistingContact()
         {
             var query = new DetailContact.Query(GuidHelper.ToGuid(1));
-
             var result = await SendAsync(query);
-
-            result.Should().BeOfType<ApiResult<Contact>>();
+            result.Should().BeOfType<ApiResult<ContactDto>>();
             result.Value.Should().BeNull();
         }
     }
