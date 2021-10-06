@@ -1,10 +1,11 @@
-using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
+using Application.Interfaces;
 using Domain;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Contacts
@@ -24,14 +25,21 @@ namespace Application.Contacts
         public class Handler : IRequestHandler<Command, ApiResult<Contact>>
         {
             private readonly DataContext _context;
+            private readonly IUserAccessor _userAccessor;
 
-            public Handler(DataContext context)
+            public Handler(DataContext context, IUserAccessor userAccessor)
             {
                 _context = context;
+                _userAccessor = userAccessor;
             }
 
             public async Task<ApiResult<Contact>> Handle(Command request, CancellationToken cancellationToken)
             {
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername(),
+                    cancellationToken: cancellationToken);
+
+                request.Contact.Vendor = await _context.Vendors.FirstOrDefaultAsync(x => x.Account == user, cancellationToken: cancellationToken);
+
                 _context.Contacts.Add(request.Contact);
 
                 var result = await _context.SaveChangesAsync(cancellationToken) > 0;
