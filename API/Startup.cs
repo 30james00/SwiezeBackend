@@ -2,8 +2,10 @@ using API.Extensions;
 using API.Middleware;
 using Application;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,7 +15,7 @@ namespace API
     public class Startup
     {
         public static readonly string ClientOrigin = "_clientOrigin";
-        
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -24,7 +26,11 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().AddFluentValidation(config =>
+            services.AddControllers(opt =>
+            {
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                opt.Filters.Add(new AuthorizeFilter(policy));
+            }).AddFluentValidation(config =>
             {
                 config.RegisterValidatorsFromAssemblyContaining<FluentValidationEntrypoint>();
             });
@@ -47,7 +53,7 @@ namespace API
             // app.UseHttpsRedirection();
 
             app.UseRouting();
-            
+
             app.UseCors(ClientOrigin);
 
             app.UseAuthentication();
