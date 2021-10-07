@@ -13,7 +13,7 @@ namespace Persistence
 {
     public class Seed
     {
-        private const int ClientCount = 0;
+        private const int ClientCount = 10;
         private const int VendorCount = 10;
         private const int ContactCount = ClientCount + VendorCount;
         private const int AccountCount = ClientCount + VendorCount;
@@ -22,14 +22,20 @@ namespace Persistence
         {
             Randomizer.Seed = new Random(58177474);
 
+            var clientIndex = 1;
             var contactIndex = 1;
             var vendorIndex = 1;
+
+            var clients = new List<Client>();
+            var contacts = new List<Contact>();
+            var users = new List<Account>();
+            var vendors = new List<Vendor>();
 
             if (!userManager.Users.Any())
             {
                 var accountFaker = AccountFaker.Create();
 
-                var users = new List<Account>();
+
                 users.AddRange(accountFaker.GenerateBetween(AccountCount, AccountCount));
 
                 foreach (var user in users)
@@ -38,11 +44,20 @@ namespace Persistence
                 }
             }
 
+            if (!context.Clients.Any())
+            {
+                var clientFaker = ClientFaker.CreateWithAccount(clientIndex, users);
+
+                clients.AddRange(clientFaker.GenerateBetween(ClientCount, ClientCount));
+
+                await context.Clients.AddRangeAsync(clients);
+                await context.SaveChangesAsync();
+            }
+
             if (!context.Vendors.Any())
             {
-                var vendorFaker = VendorFaker.CreateWithAccount(vendorIndex, userManager.Users.ToList());
+                var vendorFaker = VendorFaker.CreateWithAccount(vendorIndex, users);
 
-                var vendors = new List<Vendor>();
                 vendors.AddRange(vendorFaker.GenerateBetween(VendorCount, VendorCount));
 
                 await context.Vendors.AddRangeAsync(vendors);
@@ -51,10 +66,11 @@ namespace Persistence
 
             if (!context.Contacts.Any())
             {
-                var contactFaker = ContactFaker.CreateWithId(contactIndex, contactIndex);
+                var contactFaker = ContactFaker.CreateWithClient(contactIndex, 0, clients);
+                contacts.AddRange(contactFaker.GenerateBetween(ClientCount, ClientCount));
 
-                var contacts = new List<Contact>();
-                contacts.AddRange(contactFaker.GenerateBetween(ContactCount, ContactCount));
+                contactFaker = ContactFaker.CreateWithVendor(contactIndex+ClientCount, 0, vendors);
+                contacts.AddRange(contactFaker.GenerateBetween(VendorCount, VendorCount));
 
                 await context.Contacts.AddRangeAsync(contacts);
                 await context.SaveChangesAsync();
