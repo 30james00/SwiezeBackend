@@ -1,7 +1,9 @@
 using System.Text;
 using API.Services;
 using Domain;
+using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +33,14 @@ namespace API.Extensions
                         ValidateAudience = false,
                     };
                 });
+
+            services.AddAuthorization(opt =>
+            {
+                opt.AddPolicy("IsContactOwner",
+                    policy => { policy.Requirements.Add(new IsContactOwnerRequirement()); });
+            });
+
+            services.AddTransient<IAuthorizationHandler, IsContactOwnerRequirementHandler>();
             services.AddScoped<ITokenService, TokenService>();
 
             return services;
