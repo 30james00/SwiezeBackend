@@ -24,5 +24,7 @@ namespace Domain
 
         public Vendor Vendor { get; set; }
         public Guid? VendorId { get; set; }
+        public Client Client { get; set; }
+        public Guid? ClientId { get; set; }
     }
 }

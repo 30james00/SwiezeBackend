@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Bogus;
 using Domain;
-using Microsoft.AspNetCore.Identity;
 
 namespace Persistence.Faker
 {

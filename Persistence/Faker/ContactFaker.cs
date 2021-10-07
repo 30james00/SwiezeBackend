@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using Bogus;
 using Domain;
 
@@ -6,7 +6,7 @@ namespace Persistence.Faker
 {
     public static class ContactFaker
     {
-        public static Faker<Contact> Create(int vendor = -1)
+        public static Faker<Contact> Create()
         {
             return new Faker<Contact>()
                 .RuleFor(o => o.Mail, f => f.Internet.Email())
@@ -16,14 +16,21 @@ namespace Persistence.Faker
                 .RuleFor(o => o.City, f => f.Address.City())
                 .RuleFor(o => o.Street, f => f.Address.StreetName())
                 .RuleFor(o => o.HouseNumber, f => f.Address.BuildingNumber())
-                .RuleFor(o => o.FlatNumber, f => $"{f.Random.String(1, 3, '0', '9')}{f.Random.String(0, 1, 'A', 'Z')}")
-                .RuleFor(o => o.VendorId, f => vendor > -1 ? GuidHelper.ToGuid(vendor++) : null);
+                .RuleFor(o => o.FlatNumber, f => $"{f.Random.String(1, 3, '0', '9')}{f.Random.String(0, 1, 'A', 'Z')}");
         }
 
-        public static Faker<Contact> CreateWithId(int contactIndex, int vendor = -1)
+        public static Faker<Contact> CreateWithClient(int contactIndex, int clientIndex, List<Client> clients)
         {
-            return Create(vendor)
-                .RuleFor(o => o.Id, f => GuidHelper.ToGuid(contactIndex++));
+            return Create()
+                .RuleFor(o => o.Id, _ => GuidHelper.ToGuid(contactIndex++))
+                .RuleFor(o => o.ClientId, _ => clients[clientIndex++].Id);
+        }
+
+        public static Faker<Contact> CreateWithVendor(int contactIndex, int vendorIndex, List<Vendor> vendors)
+        {
+            return Create()
+                .RuleFor(o => o.Id, _ => GuidHelper.ToGuid(contactIndex++))
+                .RuleFor(o => o.VendorId, _ => vendors[vendorIndex++].Id);
         }
     }
 }
