@@ -10,6 +10,7 @@ namespace Persistence
         {
         }
 
+        public DbSet<Client> Clients { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
 
