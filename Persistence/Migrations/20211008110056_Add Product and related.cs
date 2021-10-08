@@ -21,7 +21,7 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UnitType",
+                name: "UnitTypes",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -29,7 +29,7 @@ namespace Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UnitType", x => x.Id);
+                    table.PrimaryKey("PK_UnitTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -40,7 +40,7 @@ namespace Persistence.Migrations
                     Name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     Value = table.Column<int>(type: "integer", nullable: false),
                     Unit = table.Column<float>(type: "real", nullable: false),
-                    Amount = table.Column<float>(type: "real", nullable: false),
+                    Stock = table.Column<int>(type: "integer", nullable: false),
                     UnitTypeId = table.Column<Guid>(type: "uuid", nullable: false),
                     VendorId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -48,9 +48,9 @@ namespace Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Products_UnitType_UnitTypeId",
+                        name: "FK_Products_UnitTypes_UnitTypeId",
                         column: x => x.UnitTypeId,
-                        principalTable: "UnitType",
+                        principalTable: "UnitTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -119,7 +119,7 @@ namespace Persistence.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "UnitType");
+                name: "UnitTypes");
         }
     }
 }

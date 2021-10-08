@@ -10,7 +10,7 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20211008095933_Add Product and related")]
+    [Migration("20211008110056_Add Product and related")]
     partial class AddProductandrelated
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -205,13 +205,13 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<float>("Amount")
-                        .HasColumnType("real");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("integer");
 
                     b.Property<float>("Unit")
                         .HasColumnType("real");
@@ -268,7 +268,7 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UnitType");
+                    b.ToTable("UnitTypes");
                 });
 
             modelBuilder.Entity("Domain.Vendor", b =>
