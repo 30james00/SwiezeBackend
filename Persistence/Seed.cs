@@ -12,6 +12,7 @@ namespace Persistence
 {
     public class Seed
     {
+        private const int CartCount = 50;
         private const int CategoryCount = 10;
         private const int ClientCount = 10;
         private const int ProductCount = 100;
@@ -27,6 +28,7 @@ namespace Persistence
             var contactIndex = 1;
             var vendorIndex = 1;
 
+            var carts = new List<Cart>();
             var categories = new List<Category>();
             var clients = new List<Client>();
             var contacts = new List<Contact>();
@@ -117,6 +119,15 @@ namespace Persistence
                     productCategories.AddRange(productCategoryFaker.GenerateBetween(ProductCount, ProductCount));
 
                     await context.ProductCategories.AddRangeAsync(productCategories);
+                    await context.SaveChangesAsync();
+                }
+
+                if (!context.Carts.Any())
+                {
+                    var cartFaker = CartFaker.Create(clients, products);
+                    carts.AddRange(cartFaker.GenerateBetween(CartCount, CartCount));
+
+                    await context.Carts.AddRangeAsync(carts);
                     await context.SaveChangesAsync();
                 }
             }
