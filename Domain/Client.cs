@@ -16,5 +16,6 @@ namespace Domain
         public Contact Contact { get; set; }
 
         public List<Cart> Carts { get; set; }
+        public List<Order> Orders { get; set; }
     }
 }

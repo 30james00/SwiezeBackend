@@ -15,6 +15,8 @@ namespace Persistence
         private const int CartCount = 50;
         private const int CategoryCount = 10;
         private const int ClientCount = 10;
+        private const int OrderCount = 50;
+        private const int OrderItemCount = 100;
         private const int ProductCount = 100;
         private const int VendorCount = 10;
         //private const int ContactCount = ClientCount + VendorCount;
@@ -32,6 +34,8 @@ namespace Persistence
             var categories = new List<Category>();
             var clients = new List<Client>();
             var contacts = new List<Contact>();
+            var orders = new List<Order>();
+            var orderItems = new List<OrderItem>();
             var products = new List<Product>();
             var productCategories = new List<ProductCategory>();
             var users = new List<Account>();
@@ -129,6 +133,24 @@ namespace Persistence
 
                     await context.Carts.AddRangeAsync(carts);
                     await context.SaveChangesAsync();
+                }
+
+                if (!context.Orders.Any())
+                {
+                    var orderFaker = OrderFaker.Create(clients, vendors);
+                    orders.AddRange(orderFaker.GenerateBetween(OrderCount,OrderCount));
+
+                    await context.Orders.AddRangeAsync(orders);
+                    await context.SaveChangesAsync();
+                    
+                    if (!context.OrderItems.Any())
+                    {
+                        var orderItemFaker = OrderItemFaker.Create(orders, products);
+                        orderItems.AddRange(orderItemFaker.GenerateBetween(OrderItemCount,OrderItemCount));
+
+                        await context.OrderItems.AddRangeAsync(orderItems);
+                        await context.SaveChangesAsync();
+                    }
                 }
             }
         }
