@@ -20,5 +20,6 @@ namespace Domain
         public List<ProductCategory> ProductCategories { get; set; }
 
         public List<Cart> Carts { get; set; }
+        public List<OrderItem> OrderItems { get; set; }
     }
 }
