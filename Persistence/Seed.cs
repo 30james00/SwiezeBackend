@@ -16,6 +16,7 @@ namespace Persistence
         private const int CategoryCount = 10;
         private const int ClientCount = 10;
         private const int CouponCount = 20;
+        private const int ReviewCount = 50;
         private const int OrderCount = 50;
         private const int OrderItemCount = 100;
         private const int ProductCount = 100;
@@ -42,6 +43,7 @@ namespace Persistence
             var orderItems = new List<OrderItem>();
             var products = new List<Product>();
             var productCategories = new List<ProductCategory>();
+            var reviews = new List<Review>();
             var users = new List<Account>();
             var unitTypes = new List<UnitType>();
             var vendors = new List<Vendor>();
@@ -77,6 +79,15 @@ namespace Persistence
 
                     await context.Vendors.AddRangeAsync(vendors);
                     await context.SaveChangesAsync();
+
+                    if (!context.Reviews.Any())
+                    {
+                        var reviewFaker = ReviewFaker.Create(clients, vendors);
+                        reviews.AddRange(reviewFaker.GenerateBetween(ReviewCount,ReviewCount));
+
+                        await context.Reviews.AddRangeAsync(reviews);
+                        await context.SaveChangesAsync();
+                    }
                 }
 
                 if (!context.Contacts.Any())
