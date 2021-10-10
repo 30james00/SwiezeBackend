@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Domain
 {
@@ -13,5 +14,7 @@ namespace Domain
         public string? AccountId { get; set; }
 #nullable disable
         public Contact Contact { get; set; }
+
+        public List<Cart> Carts { get; set; }
     }
 }

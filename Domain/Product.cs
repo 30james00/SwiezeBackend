@@ -18,5 +18,7 @@ namespace Domain
         public Vendor Vendor { get; set; }
 
         public List<ProductCategory> ProductCategories { get; set; }
+
+        public List<Cart> Carts { get; set; }
     }
 }
