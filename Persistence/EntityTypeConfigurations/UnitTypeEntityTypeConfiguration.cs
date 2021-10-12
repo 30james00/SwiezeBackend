@@ -8,7 +8,8 @@ namespace Persistence.EntityTypeConfigurations
     {
         public void Configure(EntityTypeBuilder<UnitType> builder)
         {
-            builder.Property(a => a.Name).IsRequired().HasMaxLength(30);
+            builder.Property(x => x.Name).IsRequired().HasMaxLength(30);
+            builder.HasIndex(x => x.Name).IsUnique();
         }
     }
 }
