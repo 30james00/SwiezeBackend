@@ -11,7 +11,7 @@ namespace Persistence.Faker
             return new Faker<Product>()
                 .RuleFor(x => x.Name, f => f.Commerce.Product())
                 .RuleFor(x => x.Value, f => f.Random.Int(100, 50000))
-                .RuleFor(x => x.Unit, f => f.Random.Float(0F, 100F))
+                .RuleFor(x => x.Unit, f => f.Random.Int(1,100000))
                 .RuleFor(x => x.Stock, f => f.Random.Int(1, 1000))
                 .RuleFor(x => x.UnitTypeId, f => f.PickRandom(unitTypes).Id)
                 .RuleFor(x => x.VendorId, f => f.PickRandom(vendors).Id);
