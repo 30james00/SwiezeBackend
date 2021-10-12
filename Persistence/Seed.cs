@@ -108,8 +108,8 @@ namespace Persistence
                     {
                         unitTypes.AddRange(new[]
                         {
-                            new UnitType { Name = "kg" },
-                            new UnitType { Name = "l" },
+                            new UnitType { Name = "g" },
+                            new UnitType { Name = "ml" },
                             new UnitType { Name = "unit" },
                         });
 

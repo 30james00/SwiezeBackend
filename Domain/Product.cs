@@ -8,7 +8,7 @@ namespace Domain
         public Guid Id { get; set; }
         public string Name { get; set; }
         public int Value { get; set; }
-        public float Unit { get; set; }
+        public int Unit { get; set; }
         public int Stock { get; set; }
 
         public Guid UnitTypeId { get; set; }
