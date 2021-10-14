@@ -1,4 +1,3 @@
-using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using API.DTOs;
@@ -34,7 +33,7 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<AccountDto>> Login(LoginDto loginDto)
         {
-            var user = await _userManager.FindByEmailAsync(loginDto.Email);
+            var user = await _userManager.FindByEmailAsync(loginDto.Mail);
 
             if (user == null) return Unauthorized();
 
@@ -48,10 +47,51 @@ namespace API.Controllers
             return Unauthorized();
         }
 
-        [HttpPost("register/vendor")]
-        public async Task<ActionResult<AccountDto>> Register(RegisterVendorDto registerVendorDto)
+        [HttpPost("register/client")]
+        public async Task<ActionResult<AccountDto>> RegisterClient(RegisterClientDto registerClientDto)
         {
-            if (await _userManager.Users.AnyAsync(x => x.Email == registerVendorDto.Email))
+            if (await _userManager.Users.AnyAsync(x => x.Email == registerClientDto.Mail))
+            {
+                return BadRequest("Email taken");
+            }
+
+            if (await _userManager.Users.AnyAsync(x => x.UserName == registerClientDto.Username))
+            {
+                return BadRequest("Username taken");
+            }
+
+            var user = new Account
+            {
+                UserName = registerClientDto.Username,
+                Email = registerClientDto.Mail,
+            };
+            var result = await _userManager.CreateAsync(user, registerClientDto.Password);
+
+            var client = new Client
+            {
+                Name = registerClientDto.FirstName,
+                Surname = registerClientDto.LastName,
+                AccountId = user.Id,
+            };
+
+            await _context.Clients.AddAsync(client);
+            var resultClient = await _context.SaveChangesAsync() > 0;
+
+            if (!resultClient)
+                return BadRequest("Problem creating Client");
+            
+            if (result.Succeeded)
+            {
+                return CreateAccountDto(user);
+            }
+
+            return BadRequest("Problem registering user");
+        }        
+        
+        [HttpPost("register/vendor")]
+        public async Task<ActionResult<AccountDto>> RegisterVendor(RegisterVendorDto registerVendorDto)
+        {
+            if (await _userManager.Users.AnyAsync(x => x.Email != registerVendorDto.Mail))
             {
                 return BadRequest("Email taken");
             }
@@ -63,9 +103,8 @@ namespace API.Controllers
 
             var user = new Account
             {
-                //Id = Guid.NewGuid().ToString(),
                 UserName = registerVendorDto.Username,
-                Email = registerVendorDto.Email,
+                Email = registerVendorDto.Mail,
             };
             var result = await _userManager.CreateAsync(user, registerVendorDto.Password);
 
