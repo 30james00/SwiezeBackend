@@ -12,8 +12,10 @@ namespace Application.IntegrationTests.Contacts
     public class CreateContactTests : TestBase
     {
         [Test]
-        public async Task CreateNewContact()
+        public async Task CreateNewClientContact()
         {
+            await RunAsClientUserAsync();
+
             var fakeContact = ContactFaker.Create().Generate();
 
             var command = new CreateContact.Command(fakeContact);
@@ -23,7 +25,34 @@ namespace Application.IntegrationTests.Contacts
             var contact = await FindAsync<Contact>(result.Value.Id);
 
             contact.Should().BeOfType<Contact>();
-            contact.Should().BeEquivalentTo(fakeContact);
+            contact.Should().BeEquivalentTo(fakeContact, opt =>
+            {
+                return opt
+                    .Excluding(x => x.Client)
+                    .Excluding(x => x.Vendor);
+            });
+        }
+
+        [Test]
+        public async Task CreateNewVendorContact()
+        {
+            await RunAsVendorUserAsync();
+
+            var fakeContact = ContactFaker.Create().Generate();
+
+            var command = new CreateContact.Command(fakeContact);
+
+            var result = await SendAsync(command);
+
+            var contact = await FindAsync<Contact>(result.Value.Id);
+
+            contact.Should().BeOfType<Contact>();
+            contact.Should().BeEquivalentTo(fakeContact, opt =>
+            {
+                return opt
+                    .Excluding(x => x.Client)
+                    .Excluding(x => x.Vendor);
+            });
         }
     }
 }

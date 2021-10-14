@@ -1,8 +1,14 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using API;
+using Application.Interfaces;
+using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +16,7 @@ using Moq;
 using Npgsql;
 using NUnit.Framework;
 using Persistence;
+using Persistence.Faker;
 using Respawn;
 
 namespace Application.IntegrationTests
@@ -20,6 +27,7 @@ namespace Application.IntegrationTests
         private static IConfigurationRoot _configuration;
         private static IServiceScopeFactory _scopeFactory;
         private static Checkpoint _checkpoint;
+        private static string _currentUserName;
 
         [OneTimeSetUp]
         public void RunBeforeAnyTest()
@@ -46,6 +54,14 @@ namespace Application.IntegrationTests
             startup.ConfigureServices(services);
 
             //auth config here
+            var currentUserServiceDescriptor = services.FirstOrDefault(d =>
+                d.ServiceType == typeof(IUserAccessor));
+
+            services.Remove(currentUserServiceDescriptor);
+
+            // Register testing version
+            services.AddScoped(provider =>
+                Mock.Of<IUserAccessor>(s => s.GetUsername() == _currentUserName));
 
             _scopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>();
 
@@ -77,7 +93,7 @@ namespace Application.IntegrationTests
             }
 
             //auth
-            //_currentUserId = null;
+            _currentUserName = null;
         }
 
         public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
@@ -120,6 +136,56 @@ namespace Application.IntegrationTests
             var context = scope.ServiceProvider.GetService<DataContext>();
 
             return await context.Set<TEntity>().CountAsync();
+        }
+
+        public static async Task<string> RunAsDefaultUserAsync()
+        {
+            return await RunAsUserAsync("test@test.com", "Pa$$w0rd", false, false);
+        }
+
+        public static async Task<string> RunAsClientUserAsync()
+        {
+            return await RunAsUserAsync("test@test.com", "Pa$$w0rd", true, false);
+        }
+
+        public static async Task<string> RunAsVendorUserAsync()
+        {
+            return await RunAsUserAsync("test@test.com", "Pa$$w0rd", false, true);
+        }
+
+
+        //roles handling deleted
+        public static async Task<string> RunAsUserAsync(string userName, string password, bool isClient,
+            bool isVendor)
+        {
+            using var scope = _scopeFactory.CreateScope();
+
+            var userManager = scope.ServiceProvider.GetService<UserManager<Account>>();
+            var context = scope.ServiceProvider.GetService<DataContext>();
+
+            var user = new Account { UserName = userName, Email = userName };
+
+            var result = await userManager.CreateAsync(user, password);
+
+            if (isClient)
+            {
+                var client = ClientFaker.CreateWithAccount(1, new List<Account>() { user }).Generate();
+                await context.Clients.AddAsync(client);
+            }
+
+            if (isVendor)
+            {
+                var vendor = VendorFaker.CreateWithAccount(1, new List<Account>() { user }).Generate();
+                await context.Vendors.AddAsync(vendor);
+            }
+
+            await context.SaveChangesAsync();
+
+            //var errors = string.Join(Environment.NewLine, result.ToApplicationResult().Errors);
+            if (!result.Succeeded) throw new Exception($"Unable to create {userName}.{Environment.NewLine}");
+            _currentUserName = user.UserName;
+
+            return _currentUserName;
         }
     }
 }
