@@ -27,7 +27,7 @@ namespace Application.IntegrationTests
         private static IConfigurationRoot _configuration;
         private static IServiceScopeFactory _scopeFactory;
         private static Checkpoint _checkpoint;
-        private static string _currentUserName;
+        private static string _currentUserId;
 
         [OneTimeSetUp]
         public void RunBeforeAnyTest()
@@ -61,7 +61,7 @@ namespace Application.IntegrationTests
 
             // Register testing version
             services.AddScoped(provider =>
-                Mock.Of<IUserAccessor>(s => s.GetUsername() == _currentUserName));
+                Mock.Of<IUserAccessor>(s => s.GetUserId() == _currentUserId));
 
             _scopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>();
 
@@ -93,7 +93,7 @@ namespace Application.IntegrationTests
             }
 
             //auth
-            _currentUserName = null;
+            _currentUserId = null;
         }
 
         public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
@@ -183,9 +183,9 @@ namespace Application.IntegrationTests
 
             //var errors = string.Join(Environment.NewLine, result.ToApplicationResult().Errors);
             if (!result.Succeeded) throw new Exception($"Unable to create {userName}.{Environment.NewLine}");
-            _currentUserName = user.UserName;
+            _currentUserId = user.Id;
 
-            return _currentUserName;
+            return _currentUserId;
         }
     }
 }
