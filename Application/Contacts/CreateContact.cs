@@ -38,12 +38,20 @@ namespace Application.Contacts
 
             public async Task<ApiResult<ContactDto>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername(),
+                var user = await _context.Users.Include(x => x.Client).Include(x => x.Vendor).FirstOrDefaultAsync(
+                    x => x.UserName == _userAccessor.GetUsername(),
                     cancellationToken: cancellationToken);
 
-                request.Contact.Vendor =
-                    await _context.Vendors.FirstOrDefaultAsync(x => x.Account == user,
-                        cancellationToken: cancellationToken);
+                if (user == null) return ApiResult<ContactDto>.Failure("Failed to create new Contact - user not found");
+
+                if (user.Client != null)
+                {
+                    request.Contact.Client = user.Client;
+                }
+                else
+                {
+                    request.Contact.Vendor = user.Vendor;
+                }
 
                 _context.Contacts.Add(request.Contact);
 
