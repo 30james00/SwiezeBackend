@@ -1,3 +1,4 @@
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using API.DTOs;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Persistence;
 
 namespace API.Controllers
 {
@@ -18,13 +20,15 @@ namespace API.Controllers
         private readonly UserManager<Account> _userManager;
         private readonly SignInManager<Account> _signInManager;
         private readonly ITokenService _tokenService;
+        private readonly DataContext _context;
 
         public AccountController(UserManager<Account> userManager, SignInManager<Account> signInManager,
-            ITokenService tokenService)
+            ITokenService tokenService, DataContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
+            _context = context;
         }
 
         [HttpPost("login")]
@@ -44,27 +48,39 @@ namespace API.Controllers
             return Unauthorized();
         }
 
-        [HttpPost("register")]
-        public async Task<ActionResult<AccountDto>> Register(RegisterDto registerDto)
+        [HttpPost("register/vendor")]
+        public async Task<ActionResult<AccountDto>> Register(RegisterVendorDto registerVendorDto)
         {
-            if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
+            if (await _userManager.Users.AnyAsync(x => x.Email == registerVendorDto.Email))
             {
                 return BadRequest("Email taken");
             }
 
-            if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
+            if (await _userManager.Users.AnyAsync(x => x.UserName == registerVendorDto.Username))
             {
                 return BadRequest("Username taken");
             }
 
             var user = new Account
             {
-                UserName = registerDto.Username,
-                Email = registerDto.Email
+                //Id = Guid.NewGuid().ToString(),
+                UserName = registerVendorDto.Username,
+                Email = registerVendorDto.Email,
+            };
+            var result = await _userManager.CreateAsync(user, registerVendorDto.Password);
+
+            var vendor = new Vendor
+            {
+                Name = registerVendorDto.Name,
+                AccountId = user.Id,
             };
 
-            var result = await _userManager.CreateAsync(user, registerDto.Password);
+            await _context.Vendors.AddAsync(vendor);
+            var resultVendor = await _context.SaveChangesAsync() > 0;
 
+            if (!resultVendor)
+                return BadRequest("Problem creating Vendor");
+            
             if (result.Succeeded)
             {
                 return CreateAccountDto(user);
