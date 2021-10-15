@@ -9,8 +9,8 @@ namespace Persistence.Faker
         public static Faker<Client> Create()
         {
             return new Faker<Client>()
-                .RuleFor(x => x.Name, f => f.Person.FirstName)
-                .RuleFor(x => x.Surname, f => f.Person.LastName);
+                .RuleFor(x => x.FirstName, f => f.Person.FirstName)
+                .RuleFor(x => x.LastName, f => f.Person.LastName);
         }
 
         public static Faker<Client> CreateWithAccount(int idx, List<Account> accounts)
