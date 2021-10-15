@@ -69,8 +69,8 @@ namespace API.Controllers
 
             var client = new Client
             {
-                Name = registerClientDto.FirstName,
-                Surname = registerClientDto.LastName,
+                FirstName = registerClientDto.FirstName,
+                LastName = registerClientDto.LastName,
                 AccountId = user.Id,
             };
 

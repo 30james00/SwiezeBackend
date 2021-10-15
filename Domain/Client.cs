@@ -6,8 +6,8 @@ namespace Domain
     public class Client
     {
         public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Surname { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
 
         public Account Account { get; set; }
 #nullable enable

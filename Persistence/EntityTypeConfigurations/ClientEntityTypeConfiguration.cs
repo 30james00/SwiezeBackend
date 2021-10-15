@@ -8,8 +8,8 @@ namespace Persistence.EntityTypeConfigurations
     {
         public void Configure(EntityTypeBuilder<Client> builder)
         {
-            builder.Property(a => a.Name).IsRequired().HasMaxLength(30);
-            builder.Property(a => a.Surname).IsRequired().HasMaxLength(35);
+            builder.Property(a => a.FirstName).IsRequired().HasMaxLength(30);
+            builder.Property(a => a.LastName).IsRequired().HasMaxLength(35);
         }
     }
 }
