@@ -22,9 +22,7 @@ namespace Domain
 
         public string FlatNumber { get; set; }
 
-        public Vendor Vendor { get; set; }
-        public Guid? VendorId { get; set; }
-        public Client Client { get; set; }
-        public Guid? ClientId { get; set; }
+        public Account Account { get; set; }
+        public string AccountId { get; set; }
     }
 }

@@ -12,7 +12,6 @@ namespace Domain
 #nullable enable
         public string? AccountId { get; set; }
 #nullable disable
-        public Contact Contact { get; set; }
 
         public List<Product> Products { get; set; }
         public List<Order> Orders { get; set; }

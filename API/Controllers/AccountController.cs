@@ -91,7 +91,7 @@ namespace API.Controllers
         [HttpPost("register/vendor")]
         public async Task<ActionResult<AccountDto>> RegisterVendor(RegisterVendorDto registerVendorDto)
         {
-            if (await _userManager.Users.AnyAsync(x => x.Email != registerVendorDto.Mail))
+            if (await _userManager.Users.AnyAsync(x => x.Email == registerVendorDto.Mail))
             {
                 return BadRequest("Email taken");
             }

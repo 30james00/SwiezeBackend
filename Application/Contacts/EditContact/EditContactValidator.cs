@@ -1,13 +1,11 @@
-using System.Data;
 using Application.Core;
-using Domain;
 using FluentValidation;
 
-namespace Application.Contacts
+namespace Application.Contacts.EditContact
 {
-    public class ContactValidator : AbstractValidator<Contact>
+    public class EditContactValidator : AbstractValidator<EditContact.Command>
     {
-        public ContactValidator()
+        public EditContactValidator()
         {
             RuleFor(x => x.Mail).NotEmpty().MaximumLength(128).EmailAddress();
             RuleFor(x => x.Phone).NotEmpty().PhoneNumber();

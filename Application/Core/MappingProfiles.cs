@@ -1,4 +1,6 @@
 using Application.Contacts;
+using Application.Contacts.CreateContact;
+using Application.Contacts.EditContact;
 using AutoMapper;
 using Domain;
 
@@ -8,9 +10,9 @@ namespace Application.Core
     {
         public MappingProfiles()
         {
-            CreateMap<Contact, Contact>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore());
             CreateMap<Contact, ContactDto>();
+            CreateMap<CreateContact.Command, Contact>();
+            CreateMap<EditContact.Command, Contact>();
         }
     }
 }

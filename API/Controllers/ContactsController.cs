@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Application.Contacts;
-using Domain;
-using Microsoft.AspNetCore.Authorization;
+using Application.Contacts.CreateContact;
+using Application.Contacts.EditContact;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -16,23 +16,21 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateContact(Contact contact)
+        public async Task<IActionResult> CreateContact(CreateContact.Command contact)
         {
-            return HandleResult(await Mediator.Send(new CreateContact.Command(contact)));
+            return HandleResult(await Mediator.Send(contact));
         }
 
-        [Authorize(Policy = "IsContactOwner")]
-        [HttpPatch("{id:guid}")]
-        public async Task<IActionResult> EditContact(Guid id, Contact contact)
+        [HttpPatch]
+        public async Task<IActionResult> EditContact(EditContact.Command contact)
         {
-            return HandleResult(await Mediator.Send(new EditContact.Command(id, contact)));
+            return HandleResult(await Mediator.Send(contact));
         }
 
-        [Authorize(Policy = "IsContactOwner")]
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteContact(Guid id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteContact()
         {
-            return HandleResult(await Mediator.Send(new DeleteContact.Command(id)));
+            return HandleResult(await Mediator.Send(new DeleteContact.Command()));
         }
     }
 }

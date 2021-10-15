@@ -19,18 +19,11 @@ namespace Persistence.Faker
                 .RuleFor(o => o.FlatNumber, f => $"{f.Random.String(1, 3, '0', '9')}{f.Random.String(0, 1, 'A', 'Z')}");
         }
 
-        public static Faker<Contact> CreateWithClient(int contactIndex, int clientIndex, List<Client> clients)
+        public static Faker<Contact> CreateWithAccount(int contactIndex, int accountIndex, List<Account> accounts)
         {
             return Create()
                 .RuleFor(o => o.Id, _ => GuidHelper.ToGuid(contactIndex++))
-                .RuleFor(o => o.ClientId, _ => clients[clientIndex++].Id);
-        }
-
-        public static Faker<Contact> CreateWithVendor(int contactIndex, int vendorIndex, List<Vendor> vendors)
-        {
-            return Create()
-                .RuleFor(o => o.Id, _ => GuidHelper.ToGuid(contactIndex++))
-                .RuleFor(o => o.VendorId, _ => vendors[vendorIndex++].Id);
+                .RuleFor(o => o.AccountId, _ => accounts[accountIndex++].Id);
         }
     }
 }
