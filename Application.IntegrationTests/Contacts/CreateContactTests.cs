@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Application.Contacts;
+using Application.Contacts.CreateContact;
 using Domain;
 using FluentAssertions;
 using NUnit.Framework;
@@ -11,48 +12,30 @@ namespace Application.IntegrationTests.Contacts
 
     public class CreateContactTests : TestBase
     {
+        private CreateContact.Command command = new CreateContact.Command
+        {
+            Mail = "test@test.com",
+            City = "Lublin",
+            Phone = "+48111222333",
+            Street = "Leeeeee",
+            Voivodeship = "Lubelskie",
+            FlatNumber = "2D",
+            HouseNumber = "1A",
+            PostalCode = "20-100"
+        };
+
         [Test]
         public async Task CreateNewClientContact()
         {
-            await RunAsClientUserAsync();
-
-            var fakeContact = ContactFaker.Create().Generate();
-
-            var command = new CreateContact.Command(fakeContact);
+            var accountId = await RunAsClientUserAsync();
 
             var result = await SendAsync(command);
 
             var contact = await FindAsync<Contact>(result.Value.Id);
 
             contact.Should().BeOfType<Contact>();
-            contact.Should().BeEquivalentTo(fakeContact, opt =>
-            {
-                return opt
-                    .Excluding(x => x.Client)
-                    .Excluding(x => x.Vendor);
-            });
-        }
-
-        [Test]
-        public async Task CreateNewVendorContact()
-        {
-            await RunAsVendorUserAsync();
-
-            var fakeContact = ContactFaker.Create().Generate();
-
-            var command = new CreateContact.Command(fakeContact);
-
-            var result = await SendAsync(command);
-
-            var contact = await FindAsync<Contact>(result.Value.Id);
-
-            contact.Should().BeOfType<Contact>();
-            contact.Should().BeEquivalentTo(fakeContact, opt =>
-            {
-                return opt
-                    .Excluding(x => x.Client)
-                    .Excluding(x => x.Vendor);
-            });
+            contact.Should().BeEquivalentTo(command);
+            contact.AccountId.Should().Be(accountId);
         }
     }
 }

@@ -34,13 +34,8 @@ namespace API.Extensions
                     };
                 });
 
-            services.AddAuthorization(opt =>
-            {
-                opt.AddPolicy("IsContactOwner",
-                    policy => { policy.Requirements.Add(new IsContactOwnerRequirement()); });
-            });
+            services.AddAuthorization();
 
-            services.AddTransient<IAuthorizationHandler, IsContactOwnerRequirementHandler>();
             services.AddScoped<ITokenService, TokenService>();
 
             return services;

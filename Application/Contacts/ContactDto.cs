@@ -23,6 +23,7 @@ namespace Application.Contacts
         public string HouseNumber { get; set; }
 
         public string FlatNumber { get; set; }
-        
+
+        public string AccountId { get; set; }
     }
 }

@@ -92,11 +92,8 @@ namespace Persistence
 
                 if (!context.Contacts.Any())
                 {
-                    var contactFaker = ContactFaker.CreateWithClient(contactIndex, 0, clients);
-                    contacts.AddRange(contactFaker.GenerateBetween(ClientCount, ClientCount));
-
-                    contactFaker = ContactFaker.CreateWithVendor(contactIndex + ClientCount, 0, vendors);
-                    contacts.AddRange(contactFaker.GenerateBetween(VendorCount, VendorCount));
+                    var contactFaker = ContactFaker.CreateWithAccount(contactIndex, 0, users);
+                    contacts.AddRange(contactFaker.GenerateBetween(AccountCount, AccountCount));
 
                     await context.Contacts.AddRangeAsync(contacts);
                     await context.SaveChangesAsync();

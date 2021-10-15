@@ -5,7 +5,6 @@ using Domain;
 using FluentAssertions;
 using MediatR;
 using NUnit.Framework;
-using Persistence;
 using Persistence.Faker;
 
 namespace Application.IntegrationTests.Contacts
@@ -17,13 +16,15 @@ namespace Application.IntegrationTests.Contacts
         [Test]
         public async Task DeleteExistingContact()
         {
+            var accountId = await RunAsClientUserAsync();
             var fakeContact = ContactFaker.Create().Generate();
-            var fakeContactId = (await AddAsync(fakeContact)).Id;
+            fakeContact.AccountId = accountId;
+            await AddAsync(fakeContact);
 
-            var command = new DeleteContact.Command(fakeContactId);
+            var command = new DeleteContact.Command();
             var result = await SendAsync(command);
 
-            var check = await FindAsync<Contact>(fakeContactId);
+            var check = await FindAsync<Contact>(fakeContact.Id);
 
             result.Should().BeOfType<ApiResult<Unit>>();
 
@@ -33,10 +34,10 @@ namespace Application.IntegrationTests.Contacts
         [Test]
         public async Task DeleteNonExistingContact()
         {
-            var command = new DeleteContact.Command(GuidHelper.ToGuid(1));
+            var command = new DeleteContact.Command();
             var result = await SendAsync(command);
 
-            result.Should().BeNull();
+            result.Should().BeOfType<ApiResult<Unit>>();
         }
     }
 }
