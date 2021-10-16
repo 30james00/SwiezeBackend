@@ -21,7 +21,7 @@ namespace Application.IntegrationTests.Contacts
 
             var fakeContactId = (await AddAsync(fakeContact)).Id;
 
-            var query = new DetailContact.Query(fakeContactId);
+            var query = new DetailContactQuery(fakeContactId);
 
             var result = await SendAsync(query);
 
@@ -33,7 +33,7 @@ namespace Application.IntegrationTests.Contacts
         [Test]
         public async Task DetailsOfNonExistingContact()
         {
-            var query = new DetailContact.Query(GuidHelper.ToGuid(1));
+            var query = new DetailContactQuery(GuidHelper.ToGuid(1));
             var result = await SendAsync(query);
             result.Should().BeOfType<ApiResult<ContactDto>>();
             result.Value.Should().BeNull();

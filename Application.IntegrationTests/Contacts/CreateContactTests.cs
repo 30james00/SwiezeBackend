@@ -12,7 +12,7 @@ namespace Application.IntegrationTests.Contacts
 
     public class CreateContactTests : TestBase
     {
-        private CreateContact.Command command = new CreateContact.Command
+        private CreateContactCommand command = new CreateContactCommand
         {
             Mail = "test@test.com",
             City = "Lublin",

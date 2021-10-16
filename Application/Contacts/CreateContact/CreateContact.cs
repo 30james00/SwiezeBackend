@@ -10,9 +10,7 @@ using Persistence;
 
 namespace Application.Contacts.CreateContact
 {
-    public class CreateContact
-    {
-        public class Command : IRequest<ApiResult<ContactDto>>
+    public class CreateContactCommand : IRequest<ApiResult<ContactDto>>
         {
             public string Mail { get; set; }
             public string Phone { get; set; }
@@ -24,20 +22,20 @@ namespace Application.Contacts.CreateContact
             public string FlatNumber { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, ApiResult<ContactDto>>
+        public class CreateContactCommandHandler : IRequestHandler<CreateContactCommand, ApiResult<ContactDto>>
         {
             private readonly DataContext _context;
             private readonly IUserAccessor _userAccessor;
             private readonly IMapper _mapper;
 
-            public Handler(DataContext context, IUserAccessor userAccessor, IMapper mapper)
+            public CreateContactCommandHandler(DataContext context, IUserAccessor userAccessor, IMapper mapper)
             {
                 _context = context;
                 _userAccessor = userAccessor;
                 _mapper = mapper;
             }
 
-            public async Task<ApiResult<ContactDto>> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<ApiResult<ContactDto>> Handle(CreateContactCommand request, CancellationToken cancellationToken)
             {
                 var userId = _userAccessor.GetUserId();
 
@@ -61,6 +59,5 @@ namespace Application.Contacts.CreateContact
                     ? ApiResult<ContactDto>.Failure("Failed to create new Contact")
                     : ApiResult<ContactDto>.Success(_mapper.Map<ContactDto>(contact));
             }
-        }
     }
 }

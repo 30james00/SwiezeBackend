@@ -9,9 +9,8 @@ using Persistence;
 
 namespace Application.Contacts.EditContact
 {
-    public class EditContact
-    {
-        public class Command : IRequest<ApiResult<Unit>>
+
+        public class EditContactCommand : IRequest<ApiResult<Unit>>
         {
             public string Mail { get; set; }
             public string Phone { get; set; }
@@ -23,20 +22,20 @@ namespace Application.Contacts.EditContact
             public string FlatNumber { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, ApiResult<Unit>>
+        public class EditContactCommandHandler : IRequestHandler<EditContactCommand, ApiResult<Unit>>
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
             private readonly IUserAccessor _userAccessor;
 
-            public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
+            public EditContactCommandHandler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
             {
                 _context = context;
                 _mapper = mapper;
                 _userAccessor = userAccessor;
             }
 
-            public async Task<ApiResult<Unit>> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<ApiResult<Unit>> Handle(EditContactCommand request, CancellationToken cancellationToken)
             {
                 var contact = await _context.Contacts.FirstOrDefaultAsync(x => x.AccountId == _userAccessor.GetUserId(),
                     cancellationToken);
@@ -52,5 +51,4 @@ namespace Application.Contacts.EditContact
                     : ApiResult<Unit>.Failure("Failed to edit the Contact");
             }
         }
-    }
 }

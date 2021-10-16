@@ -12,17 +12,17 @@ namespace API.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> DetailContact(Guid id)
         {
-            return HandleResult(await Mediator.Send(new DetailContact.Query(id)));
+            return HandleResult(await Mediator.Send(new DetailContactQuery(id)));
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateContact(CreateContact.Command contact)
+        public async Task<IActionResult> CreateContact(CreateContactCommand contact)
         {
             return HandleResult(await Mediator.Send(contact));
         }
 
         [HttpPatch]
-        public async Task<IActionResult> EditContact(EditContact.Command contact)
+        public async Task<IActionResult> EditContact(EditContactCommand contact)
         {
             return HandleResult(await Mediator.Send(contact));
         }
@@ -30,7 +30,7 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteContact()
         {
-            return HandleResult(await Mediator.Send(new DeleteContact.Command()));
+            return HandleResult(await Mediator.Send(new DeleteContactCommand()));
         }
     }
 }
