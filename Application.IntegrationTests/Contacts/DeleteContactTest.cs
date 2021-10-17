@@ -21,7 +21,7 @@ namespace Application.IntegrationTests.Contacts
             fakeContact.AccountId = accountId;
             await AddAsync(fakeContact);
 
-            var command = new DeleteContact.Command();
+            var command = new DeleteContactCommand();
             var result = await SendAsync(command);
 
             var check = await FindAsync<Contact>(fakeContact.Id);
@@ -34,7 +34,7 @@ namespace Application.IntegrationTests.Contacts
         [Test]
         public async Task DeleteNonExistingContact()
         {
-            var command = new DeleteContact.Command();
+            var command = new DeleteContactCommand();
             var result = await SendAsync(command);
 
             result.Should().BeOfType<ApiResult<Unit>>();

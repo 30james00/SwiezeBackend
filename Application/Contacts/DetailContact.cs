@@ -11,27 +11,24 @@ using Persistence;
 
 namespace Application.Contacts
 {
-    public class DetailContact
-    {
-        public record Query(Guid Id) : IRequest<ApiResult<ContactDto>>;
+        public record DetailContactQuery(Guid Id) : IRequest<ApiResult<ContactDto>>;
 
-        public class Handler : IRequestHandler<Query, ApiResult<ContactDto>>
+        public class DetailContactQueryHandler : IRequestHandler<DetailContactQuery, ApiResult<ContactDto>>
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
 
-            public Handler(DataContext context, IMapper mapper)
+            public DetailContactQueryHandler(DataContext context, IMapper mapper)
             {
                 _context = context;
                 _mapper = mapper;
             }
 
-            public async Task<ApiResult<ContactDto>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<ApiResult<ContactDto>> Handle(DetailContactQuery request, CancellationToken cancellationToken)
             {
                 return ApiResult<ContactDto>.Success(await _context.Contacts
                     .ProjectTo<ContactDto>(_mapper.ConfigurationProvider)
                     .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken: cancellationToken));
             }
         }
-    }
 }

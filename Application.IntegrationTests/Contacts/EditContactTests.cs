@@ -13,7 +13,7 @@ namespace Application.IntegrationTests.Contacts
 
     public class EditContactTests : TestBase
     {
-        private EditContact.Command command = new EditContact.Command
+        private EditContactCommand command = new EditContactCommand
         {
             Mail = "test@test.com",
             City = "Lublin",

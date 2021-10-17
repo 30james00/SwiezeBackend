@@ -11,8 +11,8 @@ namespace Application.Core
         public MappingProfiles()
         {
             CreateMap<Contact, ContactDto>();
-            CreateMap<CreateContact.Command, Contact>();
-            CreateMap<EditContact.Command, Contact>();
+            CreateMap<CreateContactCommand, Contact>();
+            CreateMap<EditContactCommand, Contact>();
         }
     }
 }
