@@ -8,16 +8,14 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Build the stack
       run: docker-compose up -d
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
-      with:
+       with:
         dotnet-version: 5.0.x
     - name: Restore dependencies
       run: dotnet restore
@@ -31,3 +29,13 @@ jobs:
       env:
         ConnectionStrings:PostgreSQL: ${{secrets.TEST_POSTGRES}}
         TokenKey: ${{secrets.TOKEN_KEY}}
+    - name: Run
+      run: dotnet run -p API/
+      env:
+        ConnectionStrings:PostgreSQL: ${{secrets.POSTGRES}}
+        TokenKey: ${{secrets.TOKEN_KEY}}
+    - name: Postman API Test
+      uses: matt-ball/newman-action@v1.0.2
+      with:
+        apiKey: ${{secrets.POSTMAN}}
+        collection: e9ca84b0-bc0c-4224-85f3-eb5fd0b9d948
