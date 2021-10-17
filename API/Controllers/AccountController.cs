@@ -146,7 +146,7 @@ namespace API.Controllers
         }
 
         [Authorize]
-        [HttpPost("refreshToken")]
+        [HttpPost("refresh-token")]
         public async Task<ActionResult<AccountDto>> RefreshToken()
         {
             var refreshToken = Request.Cookies["refreshToken"];
