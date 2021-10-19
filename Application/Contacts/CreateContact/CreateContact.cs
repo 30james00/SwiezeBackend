@@ -11,53 +11,54 @@ using Persistence;
 namespace Application.Contacts.CreateContact
 {
     public class CreateContactCommand : IRequest<ApiResult<ContactDto>>
+    {
+        public string Mail { get; set; }
+        public string Phone { get; set; }
+        public string Voivodeship { get; set; }
+        public string PostalCode { get; set; }
+        public string City { get; set; }
+        public string Street { get; set; }
+        public string HouseNumber { get; set; }
+        public string FlatNumber { get; set; }
+    }
+
+    public class CreateContactCommandHandler : IRequestHandler<CreateContactCommand, ApiResult<ContactDto>>
+    {
+        private readonly DataContext _context;
+        private readonly IUserAccessor _userAccessor;
+        private readonly IMapper _mapper;
+
+        public CreateContactCommandHandler(DataContext context, IUserAccessor userAccessor, IMapper mapper)
         {
-            public string Mail { get; set; }
-            public string Phone { get; set; }
-            public string Voivodeship { get; set; }
-            public string PostalCode { get; set; }
-            public string City { get; set; }
-            public string Street { get; set; }
-            public string HouseNumber { get; set; }
-            public string FlatNumber { get; set; }
+            _context = context;
+            _userAccessor = userAccessor;
+            _mapper = mapper;
         }
 
-        public class CreateContactCommandHandler : IRequestHandler<CreateContactCommand, ApiResult<ContactDto>>
+        public async Task<ApiResult<ContactDto>> Handle(CreateContactCommand request,
+            CancellationToken cancellationToken)
         {
-            private readonly DataContext _context;
-            private readonly IUserAccessor _userAccessor;
-            private readonly IMapper _mapper;
+            var userId = _userAccessor.GetUserId();
 
-            public CreateContactCommandHandler(DataContext context, IUserAccessor userAccessor, IMapper mapper)
+            if (userId == null)
+                return ApiResult<ContactDto>.Failure("Failed to create new Contact - user not found");
+
+            if (await _context.Contacts.FirstOrDefaultAsync(x => x.AccountId == userId, cancellationToken) != null)
             {
-                _context = context;
-                _userAccessor = userAccessor;
-                _mapper = mapper;
+                return ApiResult<ContactDto>.Failure("Failed to create new Contact - user already exists");
             }
 
-            public async Task<ApiResult<ContactDto>> Handle(CreateContactCommand request, CancellationToken cancellationToken)
-            {
-                var userId = _userAccessor.GetUserId();
+            var contact = _mapper.Map<Contact>(request);
 
-                if (userId == null)
-                    return ApiResult<ContactDto>.Failure("Failed to create new Contact - user not found");
+            contact.AccountId = userId;
 
-                if (await _context.Contacts.FirstOrDefaultAsync(x => x.AccountId == userId, cancellationToken) != null)
-                {
-                    return ApiResult<ContactDto>.Failure("Failed to create new Contact - user already exists");
-                }
-                    
-                var contact = _mapper.Map<Contact>(request);
+            _context.Contacts.Add(contact);
 
-                contact.AccountId = userId;
+            var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
-                _context.Contacts.Add(contact);
-
-                var result = await _context.SaveChangesAsync(cancellationToken) > 0;
-
-                return !result
-                    ? ApiResult<ContactDto>.Failure("Failed to create new Contact")
-                    : ApiResult<ContactDto>.Success(_mapper.Map<ContactDto>(contact));
-            }
+            return !result
+                ? ApiResult<ContactDto>.Failure("Failed to create new Contact")
+                : ApiResult<ContactDto>.Success(_mapper.Map<ContactDto>(contact));
+        }
     }
 }
