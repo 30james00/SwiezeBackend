@@ -138,6 +138,16 @@ namespace Application.IntegrationTests
             return await context.Set<TEntity>().CountAsync();
         }
 
+        public static async Task SeedAsync()
+        {
+            using var scope = _scopeFactory.CreateScope();
+
+            var context = scope.ServiceProvider.GetService<DataContext>();
+            var userManager = scope.ServiceProvider.GetService<UserManager<Account>>();
+
+            await Seed.SeedData(context, userManager, true);
+        }
+
         public static async Task<string> RunAsDefaultUserAsync()
         {
             return await RunAsUserAsync("test@test.com", "Pa$$w0rd", false, false);
