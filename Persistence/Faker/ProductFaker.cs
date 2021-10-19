@@ -10,6 +10,7 @@ namespace Persistence.Faker
 
         public static Faker<Product> Create(List<UnitType> unitTypes, List<Vendor> vendors)
         {
+            index = 1;
             return new Faker<Product>()
                 .RuleFor(x => x.Id, _ => GuidHelper.ToGuid(index++))
                 .RuleFor(x => x.Name, f => f.Commerce.Product())
