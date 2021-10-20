@@ -104,9 +104,9 @@ namespace Persistence
                     {
                         unitTypes.AddRange(new[]
                         {
-                            new UnitType { Name = "g" },
-                            new UnitType { Name = "ml" },
-                            new UnitType { Name = "unit" },
+                            new UnitType { Id = GuidHelper.ToGuid(1), Name = "g" },
+                            new UnitType { Id = GuidHelper.ToGuid(2), Name = "ml" },
+                            new UnitType { Id = GuidHelper.ToGuid(3), Name = "unit" },
                         });
 
                         await context.UnitTypes.AddRangeAsync(unitTypes);
