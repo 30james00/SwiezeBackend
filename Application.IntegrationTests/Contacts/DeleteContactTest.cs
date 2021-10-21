@@ -37,7 +37,7 @@ namespace Application.IntegrationTests.Contacts
             var command = new DeleteContactCommand();
             var result = await SendAsync(command);
 
-            result.Should().BeOfType<ApiResult<Unit>>();
+            result.IsSuccess.Should().BeFalse();
         }
     }
 }
