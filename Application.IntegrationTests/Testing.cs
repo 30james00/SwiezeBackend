@@ -148,24 +148,43 @@ namespace Application.IntegrationTests
             await Seed.SeedData(context, userManager, true);
         }
 
-        public static async Task<string> RunAsDefaultUserAsync()
+        public static async Task<(string, Guid)> RunAsDefaultUserAsync()
         {
-            return await RunAsUserAsync("test@test.com", "Pa$$w0rd", false, false);
+            return await RunAsUserAsync("test", "Pa$$w0rd", false, false);
         }
 
-        public static async Task<string> RunAsClientUserAsync()
+        public static async Task<(string, Guid)> RunAsClientUserAsync()
         {
-            return await RunAsUserAsync("test@test.com", "Pa$$w0rd", true, false);
+            return await RunAsUserAsync("test1", "Pa$$w0rd", true, false);
         }
 
-        public static async Task<string> RunAsVendorUserAsync()
+        public static async Task<(string, Guid)> RunAsClient2UserAsync()
         {
-            return await RunAsUserAsync("test@test.com", "Pa$$w0rd", false, true);
+            return await RunAsUserAsync("test2", "Pa$$w0rd", true, false);
+        }
+
+        public static async Task<(string, Guid)> RunAsVendorUserAsync()
+        {
+            return await RunAsUserAsync("test3", "Pa$$w0rd", false, true);
+        }
+
+        public static async Task<(string, Guid)> RunAsVendor2UserAsync()
+        {
+            return await RunAsUserAsync("test4", "Pa$$w0rd", false, true);
         }
 
 
         //roles handling deleted
-        public static async Task<string> RunAsUserAsync(string userName, string password, bool isClient,
+        /// <summary>
+        /// Create and login new user
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <param name="isClient"></param>
+        /// <param name="isVendor"></param>
+        /// <returns>Tuple containing accountId and id of Client or Vendor</returns>
+        /// <exception cref="Exception"></exception>
+        public static async Task<(string, Guid)> RunAsUserAsync(string userName, string password, bool isClient,
             bool isVendor)
         {
             using var scope = _scopeFactory.CreateScope();
@@ -173,20 +192,33 @@ namespace Application.IntegrationTests
             var userManager = scope.ServiceProvider.GetService<UserManager<Account>>();
             var context = scope.ServiceProvider.GetService<DataContext>();
 
-            var user = new Account { UserName = userName, Email = userName };
+            var user = new Account { UserName = userName, Email = userName + "@test.com" };
 
             var result = await userManager.CreateAsync(user, password);
 
+            var id = Guid.Empty;
+
             if (isClient)
             {
-                var client = ClientFaker.CreateWithAccount(1, new List<Account>() { user }).Generate();
+                var client = new Client
+                {
+                    AccountId = user.Id,
+                    FirstName = "Test",
+                    LastName = "Test",
+                };
                 await context.Clients.AddAsync(client);
+                id = client.Id;
             }
 
             if (isVendor)
             {
-                var vendor = VendorFaker.CreateWithAccount(1, new List<Account>() { user }).Generate();
+                var vendor = new Domain.Vendor
+                {
+                    AccountId = user.Id,
+                    Name = "Test",
+                };
                 await context.Vendors.AddAsync(vendor);
+                id = vendor.Id;
             }
 
             await context.SaveChangesAsync();
@@ -195,7 +227,7 @@ namespace Application.IntegrationTests
             if (!result.Succeeded) throw new Exception($"Unable to create {userName}.{Environment.NewLine}");
             _currentUserId = user.Id;
 
-            return _currentUserId;
+            return (_currentUserId, id);
         }
     }
 }

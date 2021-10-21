@@ -11,10 +11,11 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.Products.CreateProduct
+namespace Application.Products.EditProduct
 {
-    public class CreateProductCommand : IRequest<ApiResult<ProductDto>>
+    public class EditProductCommand : IRequest<ApiResult<ProductDto>>
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public int Value { get; set; }
         public int Unit { get; set; }
@@ -23,29 +24,34 @@ namespace Application.Products.CreateProduct
         public List<Guid> Categories { get; set; }
     }
 
-    public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, ApiResult<ProductDto>>
+    public class EditProductCommandHandler : IRequestHandler<EditProductCommand, ApiResult<ProductDto>>
     {
         private readonly DataContext _context;
         private readonly IUserAccessor _userAccessor;
         private readonly IMapper _mapper;
 
-        public CreateProductCommandHandler(DataContext context, IUserAccessor userAccessor, IMapper mapper)
+        public EditProductCommandHandler(DataContext context, IUserAccessor userAccessor, IMapper mapper)
         {
             _context = context;
             _userAccessor = userAccessor;
             _mapper = mapper;
         }
 
-        public async Task<ApiResult<ProductDto>> Handle(CreateProductCommand request,
-            CancellationToken cancellationToken)
+        public async Task<ApiResult<ProductDto>> Handle(EditProductCommand request, CancellationToken cancellationToken)
         {
+            var product = await _context.Products.FindAsync(request.Id);
+
+            if (product == null) return ApiResult<ProductDto>.Failure("Chosen Product doesn't exist");
+
             //get and check VendorId
             var userId = _userAccessor.GetUserId();
-            if (userId == null) return ApiResult<ProductDto>.Failure("Failed to create new Product - user not found");
+            if (userId == null) return ApiResult<ProductDto>.Failure("Failed to edit new Product - user not found");
             var vendorId = await _context.Vendors.Where(x => x.AccountId == userId).Select(x => x.Id)
                 .FirstOrDefaultAsync(cancellationToken);
             if (vendorId == Guid.Empty)
-                return ApiResult<ProductDto>.Failure("Failed to create new Product - user is not Vendor");
+                return ApiResult<ProductDto>.Failure("Failed to edit new Product - user is not Vendor");
+
+            if (product.VendorId != vendorId) return ApiResult<ProductDto>.Forbidden();
 
             var productCategories = new List<ProductCategory>();
 
@@ -55,17 +61,12 @@ namespace Application.Products.CreateProduct
 
             if (unitType == Guid.Empty) return ApiResult<ProductDto>.Failure("Chosen UnitType doesn't exist");
 
-            var product = new Product
-            {
-                Name = request.Name,
-                Value = request.Value,
-                Unit = request.Unit,
-                Stock = request.Stock,
-                UnitTypeId = request.UnitTypeId,
-                VendorId = vendorId,
-                ProductCategories = productCategories,
-            };
+            //remove existing ProductCategories
+            var productCategoriesToDelete =
+                await _context.ProductCategories.Where(x => x.ProductId == request.Id).ToListAsync(cancellationToken);
+            _context.ProductCategories.RemoveRange(productCategoriesToDelete);
 
+            //add new ProductCategories
             foreach (var id in request.Categories)
             {
                 if (categories.Contains(id))
@@ -80,13 +81,19 @@ namespace Application.Products.CreateProduct
             }
 
             await _context.ProductCategories.AddRangeAsync(productCategories, cancellationToken);
-            await _context.Products.AddAsync(product, cancellationToken);
+
+            product.Name = request.Name;
+            product.Value = request.Value;
+            product.Unit = request.Unit;
+            product.Stock = request.Stock;
+            product.UnitTypeId = request.UnitTypeId;
+            product.ProductCategories = productCategories;
 
             var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
             return result
                 ? ApiResult<ProductDto>.Success(_mapper.Map<ProductDto>(product))
-                : ApiResult<ProductDto>.Failure("Failed to add Product to DB");
+                : ApiResult<ProductDto>.Failure("Failed to edit Product");
         }
     }
 }
