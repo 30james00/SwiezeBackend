@@ -21,7 +21,7 @@ namespace Application.IntegrationTests.Categories
         };
         
         [Test]
-        public async Task DetailExistingProduct()
+        public async Task DetailExistingCategory()
         {
             await AddAsync(_category);
 
@@ -36,7 +36,7 @@ namespace Application.IntegrationTests.Categories
         }
 
         [Test]
-        public async Task DetailNonExistingProduct()
+        public async Task DetailNonExistingCategory()
         {
             var query = new DetailCategoryQuery(GuidHelper.ToGuid(1));
             var result = await SendAsync(query);

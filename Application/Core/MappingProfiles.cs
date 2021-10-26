@@ -4,6 +4,7 @@ using Application.Contacts;
 using Application.Contacts.CreateContact;
 using Application.Contacts.EditContact;
 using Application.Products;
+using Application.UnitTypes;
 using AutoMapper;
 using Domain;
 
@@ -28,6 +29,9 @@ namespace Application.Core
                     x => x.ProductCategories.Select(p => p.CategoryId).ToList()
                 )
             );
+            
+            //UnitType
+            CreateMap<UnitType, UnitTypeDto>();
         }
     }
 }
