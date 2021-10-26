@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.Contacts.CreateContact
 {
-    public class CreateContactValidator : AbstractValidator<CreateContact.CreateContactCommand>
+    public class CreateContactValidator : AbstractValidator<CreateContactCommand>
     {
         public CreateContactValidator()
         {

@@ -12,23 +12,22 @@ namespace Persistence
 {
     public class Seed
     {
-        private const int CartCount = 50;
-        private const int CategoryCount = 10;
-        private const int ClientCount = 10;
-        private const int CouponCount = 20;
-        private const int ReviewCount = 50;
-        private const int OrderCount = 50;
-        private const int OrderItemCount = 100;
-        private const int ProductCount = 100;
-
-        private const int VendorCount = 10;
-
-        //private const int ContactCount = ClientCount + VendorCount;
-        private const int AccountCount = ClientCount + VendorCount;
-
-        public static async Task SeedData(DataContext context, UserManager<Account> userManager)
+        public static async Task SeedData(DataContext context, UserManager<Account> userManager, bool isCompact)
         {
             Randomizer.Seed = new Random(58177474);
+
+            var cartCount = isCompact ? 5 : 50;
+            var categoryCount = isCompact ? 2 : 10;
+            var clientCount = isCompact ? 2 : 10;
+            var couponCount = isCompact ? 4 : 20;
+            var reviewCount = isCompact ? 4 : 50;
+            var orderCount = isCompact ? 5 : 50;
+            var orderItemCount = isCompact ? 10 : 100;
+            var productCount = isCompact ? 10 : 100;
+            var vendorCount = isCompact ? 2 : 10;
+
+            //private const int ContactCount = ClientCount + VendorCount;
+            var AccountCount = clientCount + vendorCount;
 
             var clientIndex = 1;
             var contactIndex = 1;
@@ -46,8 +45,8 @@ namespace Persistence
             var reviews = new List<Review>();
             var users = new List<Account>();
             var unitTypes = new List<UnitType>();
-            var vendors = new List<Vendor>();
 
+            var vendors = new List<Vendor>();
             if (!userManager.Users.Any())
             {
                 var accountFaker = AccountFaker.Create();
@@ -65,7 +64,7 @@ namespace Persistence
                 {
                     var clientFaker = ClientFaker.CreateWithAccount(clientIndex, users);
 
-                    clients.AddRange(clientFaker.GenerateBetween(ClientCount, ClientCount));
+                    clients.AddRange(clientFaker.GenerateBetween(clientCount, clientCount));
 
                     await context.Clients.AddRangeAsync(clients);
                     await context.SaveChangesAsync();
@@ -75,7 +74,7 @@ namespace Persistence
                 {
                     var vendorFaker = VendorFaker.CreateWithAccount(vendorIndex, users);
 
-                    vendors.AddRange(vendorFaker.GenerateBetween(VendorCount, VendorCount));
+                    vendors.AddRange(vendorFaker.GenerateBetween(vendorCount, vendorCount));
 
                     await context.Vendors.AddRangeAsync(vendors);
                     await context.SaveChangesAsync();
@@ -83,7 +82,7 @@ namespace Persistence
                     if (!context.Reviews.Any())
                     {
                         var reviewFaker = ReviewFaker.Create(clients, vendors);
-                        reviews.AddRange(reviewFaker.GenerateBetween(ReviewCount,ReviewCount));
+                        reviews.AddRange(reviewFaker.GenerateBetween(reviewCount, reviewCount));
 
                         await context.Reviews.AddRangeAsync(reviews);
                         await context.SaveChangesAsync();
@@ -105,9 +104,9 @@ namespace Persistence
                     {
                         unitTypes.AddRange(new[]
                         {
-                            new UnitType { Name = "g" },
-                            new UnitType { Name = "ml" },
-                            new UnitType { Name = "unit" },
+                            new UnitType { Id = GuidHelper.ToGuid(1), Name = "g" },
+                            new UnitType { Id = GuidHelper.ToGuid(2), Name = "ml" },
+                            new UnitType { Id = GuidHelper.ToGuid(3), Name = "unit" },
                         });
 
                         await context.UnitTypes.AddRangeAsync(unitTypes);
@@ -115,7 +114,7 @@ namespace Persistence
                     }
 
                     var productFaker = ProductFaker.Create(unitTypes, vendors);
-                    products.AddRange(productFaker.GenerateBetween(ProductCount, ProductCount));
+                    products.AddRange(productFaker.GenerateBetween(productCount, productCount));
 
                     await context.Products.AddRangeAsync(products);
                     await context.SaveChangesAsync();
@@ -123,7 +122,7 @@ namespace Persistence
                     if (!context.Categories.Any())
                     {
                         var categoryFaker = CategoryFaker.Create();
-                        categories.AddRange(categoryFaker.GenerateBetween(CategoryCount, CategoryCount));
+                        categories.AddRange(categoryFaker.GenerateBetween(categoryCount, categoryCount));
 
                         await context.Categories.AddRangeAsync(categories);
                         await context.SaveChangesAsync();
@@ -132,7 +131,7 @@ namespace Persistence
                     if (!context.ProductCategories.Any())
                     {
                         var productCategoryFaker = ProductCategoryFaker.Create(products, categories);
-                        productCategories.AddRange(productCategoryFaker.GenerateBetween(ProductCount, ProductCount));
+                        productCategories.AddRange(productCategoryFaker.GenerateBetween(productCount, productCount));
 
                         await context.ProductCategories.AddRangeAsync(productCategories);
                         await context.SaveChangesAsync();
@@ -141,7 +140,7 @@ namespace Persistence
                     if (!context.Carts.Any())
                     {
                         var cartFaker = CartFaker.Create(clients, products);
-                        carts.AddRange(cartFaker.GenerateBetween(CartCount, CartCount));
+                        carts.AddRange(cartFaker.GenerateBetween(cartCount, cartCount));
 
                         await context.Carts.AddRangeAsync(carts);
                         await context.SaveChangesAsync();
@@ -150,7 +149,7 @@ namespace Persistence
                     if (!context.Orders.Any())
                     {
                         var orderFaker = OrderFaker.Create(clients, vendors);
-                        orders.AddRange(orderFaker.GenerateBetween(OrderCount, OrderCount));
+                        orders.AddRange(orderFaker.GenerateBetween(orderCount, orderCount));
 
                         await context.Orders.AddRangeAsync(orders);
                         await context.SaveChangesAsync();
@@ -158,7 +157,7 @@ namespace Persistence
                         if (!context.OrderItems.Any())
                         {
                             var orderItemFaker = OrderItemFaker.Create(orders, products);
-                            orderItems.AddRange(orderItemFaker.GenerateBetween(OrderItemCount, OrderItemCount));
+                            orderItems.AddRange(orderItemFaker.GenerateBetween(orderItemCount, orderItemCount));
 
                             await context.OrderItems.AddRangeAsync(orderItems);
                             await context.SaveChangesAsync();
@@ -168,7 +167,7 @@ namespace Persistence
                     if (!context.Coupons.Any())
                     {
                         var couponFaker = CouponFaker.Create(vendors);
-                        coupons.AddRange(couponFaker.GenerateBetween(CouponCount, CouponCount));
+                        coupons.AddRange(couponFaker.GenerateBetween(couponCount, couponCount));
 
                         await context.Coupons.AddRangeAsync(coupons);
                         await context.SaveChangesAsync();

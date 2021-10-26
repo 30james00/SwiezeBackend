@@ -18,7 +18,7 @@ namespace Application.IntegrationTests.Contacts
         {
             var accountId = await RunAsClientUserAsync();
             var fakeContact = ContactFaker.Create().Generate();
-            fakeContact.AccountId = accountId;
+            fakeContact.AccountId = accountId.Item1;
             await AddAsync(fakeContact);
 
             var command = new DeleteContactCommand();
@@ -37,7 +37,7 @@ namespace Application.IntegrationTests.Contacts
             var command = new DeleteContactCommand();
             var result = await SendAsync(command);
 
-            result.Should().BeOfType<ApiResult<Unit>>();
+            result.IsSuccess.Should().BeFalse();
         }
     }
 }
