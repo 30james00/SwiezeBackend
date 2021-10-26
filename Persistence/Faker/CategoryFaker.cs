@@ -8,6 +8,7 @@ namespace Persistence.Faker
         public static Faker<Category> Create()
         {
             return new Faker<Category>()
+                .RuleFor(x => x.Id, f => f.Random.Guid())
                 .RuleFor(x => x.Name, f => f.Commerce.Department())
                 .RuleFor(x => x.Description, f => f.Lorem.Sentence());
         }
