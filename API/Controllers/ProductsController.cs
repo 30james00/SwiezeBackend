@@ -13,9 +13,10 @@ namespace API.Controllers
     {
         [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<PagedList<ProductDto>>> ListProducts([FromQuery] PagingParams param)
+        public async Task<ActionResult<PagedList<ProductDto>>> ListProducts([FromQuery] PagingParams pagingParams,
+            [FromQuery] SortingParams sortingParams)
         {
-            return HandlePagedResult(await Mediator.Send(new ListProductQuery(param)));
+            return HandlePagedResult(await Mediator.Send(new ListProductQuery(pagingParams, sortingParams)));
         }
 
         [AllowAnonymous]

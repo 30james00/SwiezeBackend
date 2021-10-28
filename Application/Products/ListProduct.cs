@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,12 +5,12 @@ using Application.Core;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Products
 {
-    public record ListProductQuery(PagingParams Params) : IRequest<ApiResult<PagedList<ProductDto>>>;
+    public record ListProductQuery
+        (PagingParams PagingParams, SortingParams SortingParams) : IRequest<ApiResult<PagedList<ProductDto>>>;
 
     public class ListProductQueryHandler : IRequestHandler<ListProductQuery, ApiResult<PagedList<ProductDto>>>
     {
@@ -28,9 +27,12 @@ namespace Application.Products
             CancellationToken cancellationToken)
         {
             var query = _context.Products.ProjectTo<ProductDto>(_mapper.ConfigurationProvider).AsQueryable();
+            
+            query = request.SortingParams.GetData(query);
 
             return ApiResult<PagedList<ProductDto>>.Success(
-                await PagedList<ProductDto>.CreateAsync(query, request.Params.PageNumber, request.Params.PageSize));
+                await PagedList<ProductDto>.CreateAsync(query, request.PagingParams.PageNumber,
+                    request.PagingParams.PageSize));
         }
     }
 }

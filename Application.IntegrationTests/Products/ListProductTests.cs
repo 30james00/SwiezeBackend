@@ -22,7 +22,7 @@ namespace Application.IntegrationTests.Products
             ProductFaker.Create(new List<UnitType> { UnitTypes }, new List<Domain.Vendor>() { Vendors })
                 .Generate();
 
-        private readonly ListProductQuery _listProductQuery = new ListProductQuery(new PagingParams());
+        private readonly ListProductQuery _listProductQuery = new ListProductQuery(new PagingParams(), new SortingParams());
 
         [Test]
         public async Task ListExistingProducts()
