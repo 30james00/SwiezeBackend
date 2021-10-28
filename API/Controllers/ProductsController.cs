@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using Application.Core;
 using Application.Products;
 using Application.Products.CreateProduct;
 using Application.Products.EditProduct;
@@ -13,9 +13,9 @@ namespace API.Controllers
     {
         [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<List<ProductDto>>> ListProducts()
+        public async Task<ActionResult<PagedList<ProductDto>>> ListProducts([FromQuery] PagingParams param)
         {
-            return HandleResult(await Mediator.Send(new ListProductQuery()));
+            return HandlePagedResult(await Mediator.Send(new ListProductQuery(param)));
         }
 
         [AllowAnonymous]

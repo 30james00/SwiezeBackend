@@ -11,9 +11,9 @@ using Persistence;
 
 namespace Application.Products
 {
-    public record ListProductQuery() : IRequest<ApiResult<List<ProductDto>>>;
+    public record ListProductQuery(PagingParams Params) : IRequest<ApiResult<PagedList<ProductDto>>>;
 
-    public class ListProductQueryHandler : IRequestHandler<ListProductQuery, ApiResult<List<ProductDto>>>
+    public class ListProductQueryHandler : IRequestHandler<ListProductQuery, ApiResult<PagedList<ProductDto>>>
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -24,13 +24,13 @@ namespace Application.Products
             _mapper = mapper;
         }
 
-        public async Task<ApiResult<List<ProductDto>>> Handle(ListProductQuery request,
+        public async Task<ApiResult<PagedList<ProductDto>>> Handle(ListProductQuery request,
             CancellationToken cancellationToken)
         {
-            var contacts = await _context.Products.ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken);
+            var query = _context.Products.ProjectTo<ProductDto>(_mapper.ConfigurationProvider).AsQueryable();
 
-            return ApiResult<List<ProductDto>>.Success(contacts);
+            return ApiResult<PagedList<ProductDto>>.Success(
+                await PagedList<ProductDto>.CreateAsync(query, request.Params.PageNumber, request.Params.PageSize));
         }
     }
 }

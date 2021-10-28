@@ -22,7 +22,7 @@ namespace Application.IntegrationTests.Products
             ProductFaker.Create(new List<UnitType> { UnitTypes }, new List<Domain.Vendor>() { Vendors })
                 .Generate();
 
-        private readonly ListProductQuery _listProductQuery = new ListProductQuery();
+        private readonly ListProductQuery _listProductQuery = new ListProductQuery(new PagingParams());
 
         [Test]
         public async Task ListExistingProducts()
@@ -32,7 +32,7 @@ namespace Application.IntegrationTests.Products
             var result = await SendAsync(_listProductQuery);
 
             result.IsSuccess.Should().BeTrue();
-            result.Value.Should().BeOfType<List<ProductDto>>();
+            result.Value.Should().BeOfType<PagedList<ProductDto>>();
             result.Value.Should().HaveCount(10);
         }
 
@@ -42,7 +42,7 @@ namespace Application.IntegrationTests.Products
             var result = await SendAsync(_listProductQuery);
 
             result.IsSuccess.Should().BeTrue();
-            result.Value.Should().BeOfType<List<ProductDto>>();
+            result.Value.Should().BeOfType<PagedList<ProductDto>>();
             result.Value.Should().HaveCount(0);
         }
     }
