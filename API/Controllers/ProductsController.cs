@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Products;
 using Application.Products.CreateProduct;
@@ -12,28 +13,28 @@ namespace API.Controllers
     {
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> ListProducts()
+        public async Task<ActionResult<List<ProductDto>>> ListProducts()
         {
             return HandleResult(await Mediator.Send(new ListProductQuery()));
         }
 
         [AllowAnonymous]
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> DetailProduct(Guid id)
+        public async Task<ActionResult<ProductDto>> DetailProduct(Guid id)
         {
             return HandleResult(await Mediator.Send(new DetailProductQuery(id)));
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateProduct(CreateProductCommand command)
+        public async Task<ActionResult<ProductDto>> CreateProduct(CreateProductCommand command)
         {
             return HandleResult(await Mediator.Send(command));
         }
 
         [Authorize]
         [HttpPatch]
-        public async Task<IActionResult> EditProduct(EditProductCommand command)
+        public async Task<ActionResult<ProductDto>> EditProduct(EditProductCommand command)
         {
             return HandleResult(await Mediator.Send(command));
         }

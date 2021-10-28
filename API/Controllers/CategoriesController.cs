@@ -10,7 +10,7 @@ namespace API.Controllers
     {
         [AllowAnonymous]
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> DetailCategory(Guid id)
+        public async Task<ActionResult<CategoryDto>> DetailCategory(Guid id)
         {
             return HandleResult(await Mediator.Send(new DetailCategoryQuery(id)));
         }
