@@ -1,12 +1,9 @@
-using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
 using Application.Core;
 using Application.Products;
-using Bogus.Extensions;
-using Domain;
 using FluentAssertions;
 using NUnit.Framework;
-using Persistence.Faker;
 
 namespace Application.IntegrationTests.Products
 {
@@ -14,21 +11,18 @@ namespace Application.IntegrationTests.Products
 
     public class ListProductTests : TestBase
     {
-        private static readonly Domain.Vendor Vendors = VendorFaker.Create().Generate();
+        private readonly ListProductQuery _listProductQuery =
+            new(new ProductParams(), new SortingParams());
 
-        private static readonly UnitType UnitTypes = new UnitType { Name = "Test" };
-
-        private static readonly Product Products =
-            ProductFaker.Create(new List<UnitType> { UnitTypes }, new List<Domain.Vendor>() { Vendors })
-                .Generate();
-
-        private readonly ListProductQuery _listProductQuery = new ListProductQuery(new PagingParams(), new SortingParams());
+        [SetUp]
+        public async Task SetUp()
+        {
+            await SeedAsync();
+        }
 
         [Test]
         public async Task ListExistingProducts()
         {
-            await SeedAsync();
-
             var result = await SendAsync(_listProductQuery);
 
             result.IsSuccess.Should().BeTrue();
@@ -37,8 +31,54 @@ namespace Application.IntegrationTests.Products
         }
 
         [Test]
+        public async Task ListWithValueFilter()
+        {
+            var result = await SendAsync(new ListProductQuery(new ProductParams
+                { MinValue = 20000, MaxValue = 40000 }, new SortingParams()));
+
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().BeOfType<PagedList<ProductDto>>();
+            result.Value.Should().HaveCount(3);
+        }
+
+        [Test]
+        public async Task ListWithUnitFilter()
+        {
+            var result = await SendAsync(new ListProductQuery(new ProductParams
+                { MaxUnit = 10000 }, new SortingParams()));
+
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().BeOfType<PagedList<ProductDto>>();
+            result.Value.Should().HaveCount(2);
+        }
+
+        [Test]
+        public async Task ListWithCategoryFilter()
+        {
+            var result = await SendAsync(new ListProductQuery(new ProductParams
+                { Category = Guid.Parse("0af1f481-ce63-18a5-cfe4-c6e774a9e75f") }, new SortingParams()));
+
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().BeOfType<PagedList<ProductDto>>();
+            result.Value.Should().HaveCount(3);
+        }
+
+        [Test]
+        public async Task ListWithNameFilter()
+        {
+            var result = await SendAsync(new ListProductQuery(new ProductParams
+                { Name = "Salad" }, new SortingParams()));
+
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().BeOfType<PagedList<ProductDto>>();
+            result.Value.Should().HaveCount(1);
+        }
+
+        [Test]
         public async Task ListEmptyProducts()
         {
+            await ResetState();
+            
             var result = await SendAsync(_listProductQuery);
 
             result.IsSuccess.Should().BeTrue();

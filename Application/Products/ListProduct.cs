@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ using Persistence;
 namespace Application.Products
 {
     public record ListProductQuery
-        (PagingParams PagingParams, SortingParams SortingParams) : IRequest<ApiResult<PagedList<ProductDto>>>;
+        (ProductParams ProductParams, SortingParams SortingParams) : IRequest<ApiResult<PagedList<ProductDto>>>;
 
     public class ListProductQueryHandler : IRequestHandler<ListProductQuery, ApiResult<PagedList<ProductDto>>>
     {
@@ -27,12 +28,36 @@ namespace Application.Products
             CancellationToken cancellationToken)
         {
             var query = _context.Products.ProjectTo<ProductDto>(_mapper.ConfigurationProvider).AsQueryable();
-            
+
+            //Name filter
+            if (request.ProductParams.Name != null)
+                query = query.Where(x => x.Name.ToLower() == request.ProductParams.Name.ToLower());
+
+            //Value filter
+            if (request.ProductParams.MinValue != 0)
+                query = query.Where(x =>
+                    x.Value >= request.ProductParams.MinValue);
+            if (request.ProductParams.MaxValue != 0)
+                query = query.Where(x =>
+                    x.Value <= request.ProductParams.MaxValue);
+
+            //Unit filter
+            if (request.ProductParams.MinUnit != 0)
+                query = query.Where(x =>
+                    x.Unit >= request.ProductParams.MinUnit);
+            if (request.ProductParams.MaxValue != 0)
+                query = query.Where(x =>
+                    x.Unit <= request.ProductParams.MaxUnit);
+
+            //Category filter
+            if (request.ProductParams.Category != Guid.Empty)
+                query = query.Where(x => x.Categories.Contains(request.ProductParams.Category));
+
             query = request.SortingParams.GetData(query);
 
             return ApiResult<PagedList<ProductDto>>.Success(
-                await PagedList<ProductDto>.CreateAsync(query, request.PagingParams.PageNumber,
-                    request.PagingParams.PageSize));
+                await PagedList<ProductDto>.CreateAsync(query, request.ProductParams.PageNumber,
+                    request.ProductParams.PageSize));
         }
     }
 }
