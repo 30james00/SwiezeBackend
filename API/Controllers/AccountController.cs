@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Services;
+using Application.Services;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -22,14 +23,16 @@ namespace API.Controllers
         private readonly SignInManager<Account> _signInManager;
         private readonly ITokenService _tokenService;
         private readonly DataContext _context;
+        private readonly IAccountService _accountService;
 
         public AccountController(UserManager<Account> userManager, SignInManager<Account> signInManager,
-            ITokenService tokenService, DataContext context)
+            ITokenService tokenService, DataContext context, IAccountService accountService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _context = context;
+            _accountService = accountService;
         }
 
         [AllowAnonymous]
@@ -45,7 +48,7 @@ namespace API.Controllers
             if (result.Succeeded)
             {
                 await SetRefreshToken(user);
-                return CreateAccountDto(user);
+                return await CreateAccountDto(user);
             }
 
             return Unauthorized();
@@ -88,7 +91,7 @@ namespace API.Controllers
             if (result.Succeeded)
             {
                 await SetRefreshToken(user);
-                return CreateAccountDto(user);
+                return await CreateAccountDto(user);
             }
 
             return BadRequest("Problem registering user");
@@ -130,7 +133,7 @@ namespace API.Controllers
             if (result.Succeeded)
             {
                 await SetRefreshToken(user);
-                return CreateAccountDto(user);
+                return await CreateAccountDto(user);
             }
 
             return BadRequest("Problem registering user");
@@ -142,7 +145,7 @@ namespace API.Controllers
         {
             var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
 
-            return CreateAccountDto(user);
+            return await CreateAccountDto(user);
         }
 
         [Authorize]
@@ -159,7 +162,7 @@ namespace API.Controllers
 
             if (oldToken is { IsActive: false }) return Unauthorized();
 
-            return CreateAccountDto(user);
+            return await CreateAccountDto(user);
         }
 
 
@@ -179,13 +182,23 @@ namespace API.Controllers
             Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
         }
 
-        private AccountDto CreateAccountDto(Account account)
+        private async Task<AccountDto> CreateAccountDto(Account account)
         {
-            return new AccountDto
+            //check Account type
+            var accountInfo = await _accountService.GetAccountInfo(account.Id);
+
+            var accountDto = new AccountDto
             {
                 Username = account.UserName,
                 Token = _tokenService.CreateToken(account),
             };
+
+            //set fields according to Account type
+            if (accountInfo.AccountType == AccountType.Client)
+                accountDto.ClientId = accountInfo.Id;
+            else accountDto.VendorId = accountInfo.Id;
+
+            return accountDto;
         }
     }
 }

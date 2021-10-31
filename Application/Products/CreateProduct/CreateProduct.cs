@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
 using Application.Interfaces;
+using Application.Services;
 using AutoMapper;
 using Domain;
 using MediatR;
@@ -27,12 +28,14 @@ namespace Application.Products.CreateProduct
     {
         private readonly DataContext _context;
         private readonly IUserAccessor _userAccessor;
+        private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
 
-        public CreateProductCommandHandler(DataContext context, IUserAccessor userAccessor, IMapper mapper)
+        public CreateProductCommandHandler(DataContext context, IUserAccessor userAccessor, IAccountService accountService, IMapper mapper)
         {
             _context = context;
             _userAccessor = userAccessor;
+            _accountService = accountService;
             _mapper = mapper;
         }
 
@@ -42,9 +45,8 @@ namespace Application.Products.CreateProduct
             //get and check VendorId
             var userId = _userAccessor.GetUserId();
             if (userId == null) return ApiResult<ProductDto>.Failure("Failed to create new Product - user not found");
-            var vendorId = await _context.Vendors.Where(x => x.AccountId == userId).Select(x => x.Id)
-                .FirstOrDefaultAsync(cancellationToken);
-            if (vendorId == Guid.Empty)
+            var accountInfo = await _accountService.GetAccountInfo(userId);
+            if (accountInfo.AccountType != AccountType.Vendor)
                 return ApiResult<ProductDto>.Failure("Failed to create new Product - user is not Vendor");
 
             var productCategories = new List<ProductCategory>();
@@ -62,7 +64,7 @@ namespace Application.Products.CreateProduct
                 Unit = request.Unit,
                 Stock = request.Stock,
                 UnitTypeId = request.UnitTypeId,
-                VendorId = vendorId,
+                VendorId = accountInfo.Id,
                 ProductCategories = productCategories,
             };
 
