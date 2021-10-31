@@ -45,7 +45,7 @@ namespace Application.Products
             if (request.ProductParams.MinUnit != 0)
                 query = query.Where(x =>
                     x.Unit >= request.ProductParams.MinUnit);
-            if (request.ProductParams.MaxValue != 0)
+            if (request.ProductParams.MaxUnit != 0)
                 query = query.Where(x =>
                     x.Unit <= request.ProductParams.MaxUnit);
 
