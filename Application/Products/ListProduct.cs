@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,14 +6,14 @@ using Application.Core;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Products
 {
-    public record ListProductQuery() : IRequest<ApiResult<List<ProductDto>>>;
+    public record ListProductQuery
+        (ProductParams ProductParams, SortingParams SortingParams) : IRequest<ApiResult<PagedList<ProductDto>>>;
 
-    public class ListProductQueryHandler : IRequestHandler<ListProductQuery, ApiResult<List<ProductDto>>>
+    public class ListProductQueryHandler : IRequestHandler<ListProductQuery, ApiResult<PagedList<ProductDto>>>
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -24,13 +24,40 @@ namespace Application.Products
             _mapper = mapper;
         }
 
-        public async Task<ApiResult<List<ProductDto>>> Handle(ListProductQuery request,
+        public async Task<ApiResult<PagedList<ProductDto>>> Handle(ListProductQuery request,
             CancellationToken cancellationToken)
         {
-            var contacts = await _context.Products.ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken);
+            var query = _context.Products.ProjectTo<ProductDto>(_mapper.ConfigurationProvider).AsQueryable();
 
-            return ApiResult<List<ProductDto>>.Success(contacts);
+            //Name filter
+            if (request.ProductParams.Name != null)
+                query = query.Where(x => x.Name.ToLower() == request.ProductParams.Name.ToLower());
+
+            //Value filter
+            if (request.ProductParams.MinValue != 0)
+                query = query.Where(x =>
+                    x.Value >= request.ProductParams.MinValue);
+            if (request.ProductParams.MaxValue != 0)
+                query = query.Where(x =>
+                    x.Value <= request.ProductParams.MaxValue);
+
+            //Unit filter
+            if (request.ProductParams.MinUnit != 0)
+                query = query.Where(x =>
+                    x.Unit >= request.ProductParams.MinUnit);
+            if (request.ProductParams.MaxUnit != 0)
+                query = query.Where(x =>
+                    x.Unit <= request.ProductParams.MaxUnit);
+
+            //Category filter
+            if (request.ProductParams.Category != Guid.Empty)
+                query = query.Where(x => x.Categories.Contains(request.ProductParams.Category));
+
+            query = request.SortingParams.GetData(query);
+
+            return ApiResult<PagedList<ProductDto>>.Success(
+                await PagedList<ProductDto>.CreateAsync(query, request.ProductParams.PageNumber,
+                    request.ProductParams.PageSize));
         }
     }
 }

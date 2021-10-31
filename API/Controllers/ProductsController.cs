@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Application.Core;
 using Application.Products;
 using Application.Products.CreateProduct;
 using Application.Products.EditProduct;
@@ -12,28 +13,29 @@ namespace API.Controllers
     {
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> ListProducts()
+        public async Task<ActionResult<PagedList<ProductDto>>> ListProducts([FromQuery] ProductParams productParams,
+            [FromQuery] SortingParams sortingParams)
         {
-            return HandleResult(await Mediator.Send(new ListProductQuery()));
+            return HandlePagedResult(await Mediator.Send(new ListProductQuery(productParams, sortingParams)));
         }
 
         [AllowAnonymous]
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> DetailProduct(Guid id)
+        public async Task<ActionResult<ProductDto>> DetailProduct(Guid id)
         {
             return HandleResult(await Mediator.Send(new DetailProductQuery(id)));
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateProduct(CreateProductCommand command)
+        public async Task<ActionResult<ProductDto>> CreateProduct(CreateProductCommand command)
         {
             return HandleResult(await Mediator.Send(command));
         }
 
         [Authorize]
         [HttpPatch]
-        public async Task<IActionResult> EditProduct(EditProductCommand command)
+        public async Task<ActionResult<ProductDto>> EditProduct(EditProductCommand command)
         {
             return HandleResult(await Mediator.Send(command));
         }
