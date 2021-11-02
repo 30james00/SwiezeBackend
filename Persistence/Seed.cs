@@ -31,7 +31,7 @@ namespace Persistence
 
             var clientIndex = 1;
             var contactIndex = 1;
-            var vendorIndex = 1;
+            var vendorIndex = 1+clientCount;
 
             var carts = new List<Cart>();
             var categories = new List<Category>();

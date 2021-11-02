@@ -1,4 +1,5 @@
 using System.Linq;
+using Application.Carts;
 using Application.Categories;
 using Application.Contacts;
 using Application.Contacts.CreateContact;
@@ -14,14 +15,17 @@ namespace Application.Core
     {
         public MappingProfiles()
         {
+            //Cart
+            CreateMap<Cart, CartDto>();
+
             //Category
             CreateMap<Category, CategoryDto>();
-            
+
             //Contact
             CreateMap<Contact, ContactDto>();
             CreateMap<CreateContactCommand, Contact>();
             CreateMap<EditContactCommand, Contact>();
-            
+
             //Product
             CreateMap<Product, ProductDto>().ForMember(
                 x => x.Categories,
@@ -29,7 +33,7 @@ namespace Application.Core
                     x => x.ProductCategories.Select(p => p.CategoryId).ToList()
                 )
             );
-            
+
             //UnitType
             CreateMap<UnitType, UnitTypeDto>();
         }

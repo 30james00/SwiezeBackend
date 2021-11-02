@@ -173,7 +173,6 @@ namespace Application.IntegrationTests
             return await RunAsUserAsync("test4", "Pa$$w0rd", false, true);
         }
 
-
         //roles handling deleted
         /// <summary>
         /// Create and login new user
@@ -228,6 +227,21 @@ namespace Application.IntegrationTests
             _currentUserId = user.Id;
 
             return (_currentUserId, id);
+        }
+
+        /// <summary>
+        /// Log in as user with his Account Email
+        /// </summary>
+        /// <param name="id">Known email of existing Account</param>
+        public static async Task LogInAsUserAsync(string email)
+        {
+            using var scope = _scopeFactory.CreateScope();
+
+            var userManager = scope.ServiceProvider.GetService<UserManager<Account>>();
+
+            var account = await userManager.FindByEmailAsync(email);
+
+            _currentUserId = account.Id;
         }
     }
 }

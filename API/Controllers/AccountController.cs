@@ -185,7 +185,7 @@ namespace API.Controllers
         private async Task<AccountDto> CreateAccountDto(Account account)
         {
             //check Account type
-            var accountInfo = await _accountService.GetAccountInfo(account.Id);
+            var accountInfo = await _accountService.GetInfoFromUserId(account.Id);
 
             var accountDto = new AccountDto
             {

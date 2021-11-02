@@ -43,9 +43,7 @@ namespace Application.Products.CreateProduct
             CancellationToken cancellationToken)
         {
             //get and check VendorId
-            var userId = _userAccessor.GetUserId();
-            if (userId == null) return ApiResult<ProductDto>.Failure("Failed to create new Product - user not found");
-            var accountInfo = await _accountService.GetAccountInfo(userId);
+            var accountInfo = await _accountService.GetAccountInfo();
             if (accountInfo.AccountType != AccountType.Vendor)
                 return ApiResult<ProductDto>.Failure("Failed to create new Product - user is not Vendor");
 
