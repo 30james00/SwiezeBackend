@@ -12,7 +12,7 @@ using Persistence;
 
 namespace Application.Carts
 {
-    public record ListCartQuery() : IRequest<ApiResult<List<CartDto>>>;
+    public record ListCartQuery : IRequest<ApiResult<List<CartDto>>>;
 
     public class ListCartQueryHandler : IRequestHandler<ListCartQuery, ApiResult<List<CartDto>>>
     {
