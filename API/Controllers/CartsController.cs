@@ -30,6 +30,13 @@ namespace API.Controllers
         public async Task<IActionResult> RemoveFromCart(RemoveFromCartCommand command)
         {
             return HandleResult(await Mediator.Send(command));
+        }        
+        
+        [Authorize]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteCart()
+        {
+            return HandleResult(await Mediator.Send(new DeleteCartCommand()));
         }
     }
 }

@@ -12,12 +12,16 @@ namespace Application.IntegrationTests.Carts
     
     public class RemoveFromCartTests : TestBase
     {
-        [Test]
-        public async Task DeleteExistingProduct()
+        [SetUp]
+        public async Task SetUp()
         {
             await SeedAsync();
             await LogInAsUserAsync("Agustin.Keebler93@yahoo.com");
-
+        }
+        
+        [Test]
+        public async Task DeleteExistingProduct()
+        {
             var query = new RemoveFromCartCommand(Guid.Parse("00000005-0000-0000-0000-000000000000"), 2);
             var result = await SendAsync(query);
             var check = await CountAsync<Cart>();
@@ -29,9 +33,6 @@ namespace Application.IntegrationTests.Carts
         [Test]
         public async Task RemoveExistingProduct()
         {
-            await SeedAsync();
-            await LogInAsUserAsync("Agustin.Keebler93@yahoo.com");
-
             var query = new RemoveFromCartCommand(Guid.Parse("00000005-0000-0000-0000-000000000000"), 1);
             var result = await SendAsync(query);
             var check = await CountAsync<Cart>();
@@ -43,9 +44,6 @@ namespace Application.IntegrationTests.Carts
         [Test]
         public async Task RemoveTooMuchExistingProduct()
         {
-            await SeedAsync();
-            await LogInAsUserAsync("Agustin.Keebler93@yahoo.com");
-
             var query = new RemoveFromCartCommand(Guid.Parse("00000005-0000-0000-0000-000000000000"), 5);
             var result = await SendAsync(query);
             var check = await CountAsync<Cart>();
@@ -58,9 +56,6 @@ namespace Application.IntegrationTests.Carts
         [Test]
         public async Task RemoveNonExistingProduct()
         {
-            await SeedAsync();
-            await LogInAsUserAsync("Agustin.Keebler93@yahoo.com");
-
             var query = new RemoveFromCartCommand(Guid.Parse("00000004-0000-0000-0000-000000000000"), 5);
             var result = await SendAsync(query);
             var check = await CountAsync<Cart>();
