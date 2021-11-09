@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Application.Carts;
 using Application.Carts.AddToCart;
+using Application.Carts.RemoveFromCart;
 using Application.Categories;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +21,13 @@ namespace API.Controllers
         [Authorize]
         [HttpPost("add")]
         public async Task<IActionResult> AddToCart(AddToCartCommand command)
+        {
+            return HandleResult(await Mediator.Send(command));
+        }
+        
+        [Authorize]
+        [HttpPost("delete")]
+        public async Task<IActionResult> RemoveFromCart(RemoveFromCartCommand command)
         {
             return HandleResult(await Mediator.Send(command));
         }

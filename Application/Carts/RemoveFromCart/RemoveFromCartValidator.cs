@@ -1,10 +1,10 @@
 using FluentValidation;
 
-namespace Application.Carts.AddToCart
+namespace Application.Carts.RemoveFromCart
 {
-    public class AddToCartValidator : AbstractValidator<AddToCartCommand>
+    public class RemoveFromCartValidator : AbstractValidator<RemoveFromCartCommand>
     {
-        public AddToCartValidator()
+        public RemoveFromCartValidator()
         {
             RuleFor(x => x.ProductId).NotNull();
             RuleFor(x => x.Amount).NotEmpty().GreaterThanOrEqualTo(1);
