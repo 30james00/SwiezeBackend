@@ -5,7 +5,8 @@ namespace Application.Services
 {
     public interface IAccountService
     {
-        public Task<AccountInfo> GetAccountInfo(string accountId);
+        public Task<AccountInfo> GetAccountInfo();
+        public Task<AccountInfo> GetInfoFromUserId(string userId);
     }
 
     public class AccountInfo

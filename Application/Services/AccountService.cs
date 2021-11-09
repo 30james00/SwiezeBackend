@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain;
+using Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -9,34 +9,41 @@ namespace Application.Services
 {
     public class AccountService : IAccountService
     {
+        private readonly IUserAccessor _userAccessor;
         private readonly DataContext _context;
 
-        public AccountService(DataContext context)
+        public AccountService(IUserAccessor userAccessor, DataContext context)
         {
+            _userAccessor = userAccessor;
             _context = context;
         }
 
-        public async Task<AccountInfo> GetAccountInfo(string userId)
+        public async Task<AccountInfo> GetAccountInfo()
         {
-            var clientId = await _context.Clients.Where(x => x.AccountId == userId).Select(x => x.Id)
-                .FirstOrDefaultAsync();
+            var userId = _userAccessor.GetUserId();
+            if (userId == null) throw new Exception("User not logged in");
 
-            if (clientId != Guid.Empty)
+            return await GetInfoFromUserId(userId);
+        }
+
+        public async Task<AccountInfo> GetInfoFromUserId(string userId)
+        {
+            var account = await _context.Users.Include(x => x.Client).Include(x => x.Vendor)
+                .FirstOrDefaultAsync(x => x.Id == userId);
+
+            if (account.Client != null)
             {
                 return new AccountInfo
                 {
                     AccountType = AccountType.Client,
-                    Id = clientId,
+                    Id = account.Client.Id
                 };
             }
-
-            var vendorId = await _context.Vendors.Where(x => x.AccountId == userId).Select(x => x.Id)
-                .FirstOrDefaultAsync();
 
             return new AccountInfo
             {
                 AccountType = AccountType.Vendor,
-                Id = vendorId,
+                Id = account.Vendor.Id
             };
         }
     }
