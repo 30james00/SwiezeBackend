@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Carts;
 using Application.Carts.AddToCart;
@@ -13,7 +14,7 @@ namespace API.Controllers
     {
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<CartDto>> ListCart()
+        public async Task<ActionResult<List<CartDto>>> ListCart()
         {
             return HandleResult(await Mediator.Send(new ListCartQuery()));
         }
