@@ -13,7 +13,7 @@ namespace API.Controllers
     {
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<CategoryDto>> ListCart()
+        public async Task<ActionResult<CartDto>> ListCart()
         {
             return HandleResult(await Mediator.Send(new ListCartQuery()));
         }
