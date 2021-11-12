@@ -13,6 +13,14 @@ namespace Application.Orders
 
         public Guid VendorId { get; set; }
 
-        public List<Guid> Products { get; set; }
+        public List<OrderItemDto> Items { get; set; }
+    }
+
+    public class OrderItemDto
+    {
+        public Guid Id { get; set; }
+        public int Amount { get; set; }
+        public int Value { get; set; }
+        public Guid ProductId { get; set; }
     }
 }
