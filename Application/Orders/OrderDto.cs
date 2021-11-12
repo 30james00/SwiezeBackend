@@ -1,21 +1,18 @@
 using System;
 using System.Collections.Generic;
 
-namespace Domain
+namespace Application.Orders
 {
-    public class Order
+    public class OrderDto
     {
         public Guid Id { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime? FulfillmentDate { get; set; }
-        public bool IsCanceled { get; set; }
 
         public Guid ClientId { get; set; }
-        public Client Client { get; set; }
 
         public Guid VendorId { get; set; }
-        public Vendor Vendor { get; set; }
 
-        public List<OrderItem> OrderItems { get; set; }
+        public List<Guid> Products { get; set; }
     }
 }

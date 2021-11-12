@@ -12,7 +12,8 @@ namespace Persistence.Faker
                 .RuleFor(x => x.OrderDate, f => f.Date.Past())
                 .RuleFor(x => x.FulfillmentDate, f => f.Random.Bool() ? f.Date.Past() : null)
                 .RuleFor(x => x.ClientId, f => f.PickRandom(clients).Id)
-                .RuleFor(x => x.VendorId, f => f.PickRandom(vendors).Id);
+                .RuleFor(x => x.VendorId, f => f.PickRandom(vendors).Id)
+                .RuleFor(x => x.IsCanceled, f => !(f.Random.Float() <= 0.9));
         }
     }
 }

@@ -9,6 +9,7 @@ namespace Persistence.Faker
         public static Faker<Coupon> Create(List<Vendor> vendors)
         {
             return new Faker<Coupon>()
+                .RuleFor(x=>x.Id, f=>f.Random.Guid())
                 .RuleFor(x => x.Code, f => f.Random.Word().ToUpper())
                 .RuleFor(x => x.Amount, f => f.Random.Int(5, 50))
                 .RuleFor(x => x.Description, f => f.Random.Bool() ? f.Commerce.ProductDescription() : null)
