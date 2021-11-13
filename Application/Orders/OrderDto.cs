@@ -8,11 +8,10 @@ namespace Application.Orders
         public Guid Id { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime? FulfillmentDate { get; set; }
+        public bool IsCanceled { get; set; }
 
         public Guid ClientId { get; set; }
-
         public Guid VendorId { get; set; }
-
         public List<OrderItemDto> Items { get; set; }
     }
 

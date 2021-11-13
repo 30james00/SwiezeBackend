@@ -76,5 +76,26 @@ namespace Application.UnitTests.Core
 
             result.Should().BeSameAs(mock.Object.AsEnumerable());
         }
+        
+        [Test]
+        public void GetData_FakeColumn_DefaultSet()
+        {
+            var sortingParams = new SortingParams
+            {
+                SortField = "DROP",
+                SortDir = SortDirection.Desc,
+            };
+
+            var randomCategories = new List<Category>();
+            var categoryFaker = CategoryFaker.Create();
+
+            randomCategories.AddRange(categoryFaker.GenerateBetween(10, 10));
+
+            var mock = randomCategories.AsQueryable().BuildMock();
+
+            var result = sortingParams.GetData(mock.Object, "description").AsEnumerable();
+
+            result.Should().NotBeSameAs(mock.Object.AsEnumerable());
+        }
     }
 }

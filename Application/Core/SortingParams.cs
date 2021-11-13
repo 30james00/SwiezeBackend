@@ -10,19 +10,31 @@ namespace Application.Core
         public string SortField { get; set; } = null;
         public SortDirection SortDir { get; set; }
 
-        public IQueryable<T> GetData<T>(IQueryable<T> query)
+        public IQueryable<T> GetData<T>(IQueryable<T> query, string defaultField = null,
+            SortDirection defaultDir = SortDirection.Desc)
         {
-            if (SortField == null) return query;
-            
+            if (SortField == null)
+                return defaultField != null
+                    ? query.OrderBy(defaultField + (defaultDir == SortDirection.Asc ? " ascending" : " descending"))
+                    : query;
+
             //check if SortField is real field
             var propertyInfos = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
             var propertyFromQueryName = SortField.Split(" ")[0];
             var objectProperty = propertyInfos.FirstOrDefault(pi =>
                 pi.Name.Equals(propertyFromQueryName, StringComparison.InvariantCultureIgnoreCase));
 
-            if (objectProperty == null) return query;
+            //handle fake SortField
+            if (objectProperty == null)
+                return defaultField != null
+                    ? query.OrderBy(defaultField + (defaultDir == SortDirection.Asc ? " ascending" : " descending"))
+                    : query;
+            var ord = objectProperty.Name + (SortDir == SortDirection.Asc ? " ascending" : " descending");
 
-            return query.OrderBy(objectProperty.Name + (SortDir == SortDirection.Asc ? " ascending" : " descending"));
+            //handle correct SortField
+            return query.OrderBy(defaultField != null
+                ? $"{ord}, {defaultField + (defaultDir == SortDirection.Asc ? " ascending" : " descending")}"
+                : ord);
         }
     }
 

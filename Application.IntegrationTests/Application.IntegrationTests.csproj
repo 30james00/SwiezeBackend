@@ -24,8 +24,4 @@
       <ProjectReference Include="..\API\API.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Orders" />
-    </ItemGroup>
-
 </Project>
