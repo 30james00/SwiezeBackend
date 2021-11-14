@@ -24,7 +24,7 @@ namespace Application.IntegrationTests.Products
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeOfType<ProductDto>();
-            result.Value.Name.Should().Be("Pants");
+            result.Value.Name.Should().Be("Gloves");
         }
 
         [Test]

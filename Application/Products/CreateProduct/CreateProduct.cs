@@ -27,14 +27,12 @@ namespace Application.Products.CreateProduct
     public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, ApiResult<ProductDto>>
     {
         private readonly DataContext _context;
-        private readonly IUserAccessor _userAccessor;
         private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
 
-        public CreateProductCommandHandler(DataContext context, IUserAccessor userAccessor, IAccountService accountService, IMapper mapper)
+        public CreateProductCommandHandler(DataContext context, IAccountService accountService, IMapper mapper)
         {
             _context = context;
-            _userAccessor = userAccessor;
             _accountService = accountService;
             _mapper = mapper;
         }

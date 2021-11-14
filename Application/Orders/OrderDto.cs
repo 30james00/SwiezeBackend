@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace Domain
+namespace Application.Orders
 {
-    public class Order
+    public class OrderDto
     {
         public Guid Id { get; set; }
         public DateTime OrderDate { get; set; }
@@ -11,11 +11,15 @@ namespace Domain
         public bool IsCanceled { get; set; }
 
         public Guid ClientId { get; set; }
-        public Client Client { get; set; }
-
         public Guid VendorId { get; set; }
-        public Vendor Vendor { get; set; }
+        public List<OrderItemDto> Items { get; set; }
+    }
 
-        public List<OrderItem> OrderItems { get; set; }
+    public class OrderItemDto
+    {
+        public Guid Id { get; set; }
+        public int Amount { get; set; }
+        public int Value { get; set; }
+        public Guid ProductId { get; set; }
     }
 }

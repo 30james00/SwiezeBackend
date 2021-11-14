@@ -3,8 +3,6 @@ using System.Threading.Tasks;
 using Application.Carts;
 using Application.Carts.AddToCart;
 using Application.Carts.RemoveFromCart;
-using Application.Categories;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

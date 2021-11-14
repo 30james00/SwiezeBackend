@@ -22,7 +22,7 @@ namespace Application.IntegrationTests.Carts
             var check = await CountAsync<Cart>();
 
             result.IsSuccess.Should().BeTrue();
-            check.Should().Be(3);
+            check.Should().Be(4);
         }
         
         [Test]
@@ -36,7 +36,7 @@ namespace Application.IntegrationTests.Carts
             var check = await CountAsync<Cart>();
 
             result.IsSuccess.Should().BeTrue();
-            check.Should().Be(3);
+            check.Should().Be(4);
         }
     }
 }

@@ -4,6 +4,7 @@ using Application.Categories;
 using Application.Contacts;
 using Application.Contacts.CreateContact;
 using Application.Contacts.EditContact;
+using Application.Orders;
 using Application.Products;
 using Application.UnitTypes;
 using AutoMapper;
@@ -25,6 +26,13 @@ namespace Application.Core
             CreateMap<Contact, ContactDto>();
             CreateMap<CreateContactCommand, Contact>();
             CreateMap<EditContactCommand, Contact>();
+
+            //Order
+            CreateMap<OrderItem, OrderItemDto>();
+            CreateMap<Order, OrderDto>().ForMember(
+                x => x.Items,
+                o => o.MapFrom(
+                    x => x.OrderItems.ToList()));
 
             //Product
             CreateMap<Product, ProductDto>().ForMember(

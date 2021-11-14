@@ -53,6 +53,7 @@ namespace Application.Products
             if (request.ProductParams.Category != Guid.Empty)
                 query = query.Where(x => x.Categories.Contains(request.ProductParams.Category));
 
+            //Sort
             query = request.SortingParams.GetData(query);
 
             return ApiResult<PagedList<ProductDto>>.Success(

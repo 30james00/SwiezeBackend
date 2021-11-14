@@ -34,18 +34,18 @@ namespace Application.IntegrationTests.Products
         public async Task ListWithValueFilter()
         {
             var result = await SendAsync(new ListProductQuery(new ProductParams
-                { MinValue = 20000, MaxValue = 40000 }, new SortingParams()));
+                { MinValue = 200, MaxValue = 400 }, new SortingParams()));
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeOfType<PagedList<ProductDto>>();
-            result.Value.Should().HaveCount(3);
+            result.Value.Should().HaveCount(2);
         }
 
         [Test]
         public async Task ListWithUnitFilter()
         {
             var result = await SendAsync(new ListProductQuery(new ProductParams
-                { MaxUnit = 10000 }, new SortingParams()));
+                { MaxUnit = 100 }, new SortingParams()));
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeOfType<PagedList<ProductDto>>();
@@ -56,22 +56,22 @@ namespace Application.IntegrationTests.Products
         public async Task ListWithCategoryFilter()
         {
             var result = await SendAsync(new ListProductQuery(new ProductParams
-                { Category = Guid.Parse("0af1f481-ce63-18a5-cfe4-c6e774a9e75f") }, new SortingParams()));
+                { Category = Guid.Parse("391c1193-0b16-d461-21ea-f616c65f3fe2") }, new SortingParams()));
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeOfType<PagedList<ProductDto>>();
-            result.Value.Should().HaveCount(3);
+            result.Value.Should().HaveCount(4);
         }
 
         [Test]
         public async Task ListWithNameFilter()
         {
             var result = await SendAsync(new ListProductQuery(new ProductParams
-                { Name = "Salad" }, new SortingParams()));
+                { Name = "Gloves" }, new SortingParams()));
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeOfType<PagedList<ProductDto>>();
-            result.Value.Should().HaveCount(1);
+            result.Value.Should().HaveCount(3);
         }
 
         [Test]
