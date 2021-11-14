@@ -31,7 +31,7 @@ namespace Application.Orders
             var order = await _context.Orders.FindAsync(request.Id);
 
             //check if order exists
-            if (order == null) return ApiResult<OrderDto>.Failure("Order does not exists");
+            if (order == null) return ApiResult<OrderDto>.Failure("Order does not exist");
 
             //check owner of order
             if(account.AccountType == AccountType.Client || account.Id == order.Id)
