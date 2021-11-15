@@ -1,10 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Application.Coupons;
-using Application.Coupons.EditCoupon;
 using FluentAssertions;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using Persistence;
 
 namespace Application.IntegrationTests.Coupon
