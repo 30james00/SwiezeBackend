@@ -34,13 +34,13 @@ namespace Application.IntegrationTests.Orders
         {
             var query = new ListOrderQuery(new OrderParams
             {
-                MinOrderDate = new DateTime(2021, 3, 1),
-                MaxOrderDate = new DateTime(2021, 7, 1)
+                MinOrderDate = new DateTime(2020, 7, 1),
+                MaxOrderDate = new DateTime(2020, 9, 1)
             }, new SortingParams());
             
             var result = await SendAsync(query);
 
-            result.Value.Count.Should().Be(3);
+            result.Value.Count.Should().Be(2);
             result.Value.Should().BeOfType<PagedList<OrderDto>>();
         }
 
@@ -48,13 +48,13 @@ namespace Application.IntegrationTests.Orders
         {
             var query = new ListOrderQuery(new OrderParams
             {
-                MinFulfillmentDate = new DateTime(2020, 12, 1),
-                MaxFulfillmentDate = new DateTime(2021, 1, 1)
+                MinFulfillmentDate = new DateTime(2020, 3, 1),
+                MaxFulfillmentDate = new DateTime(2020, 5, 1)
             }, new SortingParams());
             
             var result = await SendAsync(query);
 
-            result.Value.Count.Should().Be(1);
+            result.Value.Count.Should().Be(2);
             result.Value.Should().BeOfType<PagedList<OrderDto>>();
         }
     }
