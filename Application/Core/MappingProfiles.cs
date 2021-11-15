@@ -5,6 +5,7 @@ using Application.Contacts;
 using Application.Contacts.CreateContact;
 using Application.Contacts.EditContact;
 using Application.Coupons;
+using Application.Coupons.EditCoupon;
 using Application.Orders;
 using Application.Products;
 using Application.UnitTypes;
@@ -27,9 +28,10 @@ namespace Application.Core
             CreateMap<Contact, ContactDto>();
             CreateMap<CreateContactCommand, Contact>();
             CreateMap<EditContactCommand, Contact>();
-            
+
             //Coupon
             CreateMap<Coupon, CouponDto>();
+            CreateMap<EditCouponCommand, Coupon>();
 
             //Order
             CreateMap<OrderItem, OrderItemDto>();
