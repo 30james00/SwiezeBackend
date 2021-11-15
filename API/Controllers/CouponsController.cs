@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Coupons;
-using Application.Coupons.AddCoupon;
+using Application.Coupons.CreateCoupon;
 using Application.Coupons.EditCoupon;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -21,7 +21,7 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<CouponDto>> AddCoupon(AddCouponCommand command)
+        public async Task<ActionResult<CouponDto>> AddCoupon(CreateCouponCommand command)
         {
             return HandleResult(await Mediator.Send(command));
         }
