@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
@@ -13,7 +12,6 @@ namespace Application.Coupons.CreateCoupon
 {
     public class CreateCouponCommand : IRequest<ApiResult<CouponDto>>
     {
-        public string Code { get; set; }
         public int Amount { get; set; }
 #nullable enable
         public string? Description { get; set; }
@@ -26,12 +24,14 @@ namespace Application.Coupons.CreateCoupon
     {
         private readonly DataContext _context;
         private readonly IAccountService _accountService;
+        private readonly ICouponService _couponService;
         private readonly IMapper _mapper;
 
-        public CreateCouponCommandHandler(DataContext context, IAccountService accountService, IMapper mapper)
+        public CreateCouponCommandHandler(DataContext context, IAccountService accountService, ICouponService couponService, IMapper mapper)
         {
             _context = context;
             _accountService = accountService;
+            _couponService = couponService;
             _mapper = mapper;
         }
 
@@ -41,14 +41,9 @@ namespace Application.Coupons.CreateCoupon
             var account = await _accountService.GetAccountInfo();
             if (account.AccountType == AccountType.Client) return ApiResult<CouponDto>.Forbidden();
 
-            //check if Coupon already exists
-            if (_context.Coupons.Where(x => x.VendorId == account.Id)
-                .Any(x => x.Code == request.Code))
-                return ApiResult<CouponDto>.Failure("Coupon with this code already exists");
-
             var coupon = new Coupon
             {
-                Code = request.Code,
+                Code = _couponService.GenerateCode(),
                 Amount = request.Amount,
                 Description = request.Description,
                 AmountOfUses = request.AmountOfUses,
