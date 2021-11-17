@@ -70,6 +70,7 @@ namespace API.Extensions
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
             services.AddScoped<IUserAccessor, UserAccessor>();
             services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<ICouponService, CouponService>();
 
             return services;
         }

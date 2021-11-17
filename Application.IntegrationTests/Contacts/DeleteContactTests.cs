@@ -11,7 +11,7 @@ namespace Application.IntegrationTests.Contacts
 {
     using static Testing;
 
-    public class DeleteContactTest : TestBase
+    public class DeleteContactTests : TestBase
     {
         [Test]
         public async Task DeleteExistingContact()

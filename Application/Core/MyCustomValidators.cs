@@ -1,3 +1,5 @@
+using System;
+using Bogus.Extensions;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -26,6 +28,11 @@ namespace Application.Core
         {
             return ruleBuilder.Matches("^([0-9]{1,4}([A-Z]{1,4})?)?$").WithMessage("Invalid flat number")
                 .MaximumLength(4).WithMessage("Flat number too long");
+        }
+
+        public static IRuleBuilderOptions<T, DateTime?> FutureDate<T>(this IRuleBuilder<T, DateTime?> ruleBuilder)
+        {
+            return ruleBuilder.Must(x => x == null || x > DateTime.Now).WithMessage("Date must be in future");
         }
     }
 }
