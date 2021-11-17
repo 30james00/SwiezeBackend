@@ -8,6 +8,7 @@ using Application.Coupons;
 using Application.Coupons.EditCoupon;
 using Application.Orders;
 using Application.Products;
+using Application.Reviews;
 using Application.UnitTypes;
 using AutoMapper;
 using Domain;
@@ -47,6 +48,9 @@ namespace Application.Core
                     x => x.ProductCategories.Select(p => p.CategoryId).ToList()
                 )
             );
+            
+            //Review
+            CreateMap<Review, ReviewDto>();
 
             //UnitType
             CreateMap<UnitType, UnitTypeDto>();
