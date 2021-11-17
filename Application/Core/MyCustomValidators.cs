@@ -1,4 +1,5 @@
 using System;
+using Bogus.Extensions;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -31,7 +32,7 @@ namespace Application.Core
 
         public static IRuleBuilderOptions<T, DateTime?> FutureDate<T>(this IRuleBuilder<T, DateTime?> ruleBuilder)
         {
-            return ruleBuilder.Must(x => x > DateTime.Now).WithMessage("Date must be in future");
+            return ruleBuilder.Must(x => x == null || x > DateTime.Now).WithMessage("Date must be in future");
         }
     }
 }

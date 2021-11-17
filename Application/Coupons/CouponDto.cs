@@ -12,5 +12,6 @@ namespace Application.Coupons
 #nullable disable
         public int? AmountOfUses { get; set; }
         public DateTime? ExpirationDate { get; set; }
+        public Guid VendorId { get; set; }
     }
 }
