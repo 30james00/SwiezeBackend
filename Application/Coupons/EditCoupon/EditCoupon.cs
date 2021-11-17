@@ -1,11 +1,9 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
 using Application.Services;
 using AutoMapper;
-using Domain;
 using MediatR;
 using Persistence;
 
