@@ -11,37 +11,59 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.Orders.AddOrder
+namespace Application.Orders.CreateOrder
 {
-    public record AddOrderCommand : IRequest<ApiResult<List<OrderDto>>>;
+    public class CreateOrderCommand : IRequest<ApiResult<List<OrderDto>>>
+    {
+        public string CouponCode { get; set; }
+    }
 
-    public class AddOrderCommandHandler : IRequestHandler<AddOrderCommand, ApiResult<List<OrderDto>>>
+    public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, ApiResult<List<OrderDto>>>
     {
         private readonly DataContext _context;
         private readonly IAccountService _accountService;
+        private readonly ICouponService _couponService;
         private readonly IMapper _mapper;
 
-        public AddOrderCommandHandler(DataContext context, IAccountService accountService, IMapper mapper)
+        public CreateOrderCommandHandler(DataContext context, IAccountService accountService,
+            ICouponService couponService, IMapper mapper)
         {
             _context = context;
             _accountService = accountService;
+            _couponService = couponService;
             _mapper = mapper;
         }
 
-        public async Task<ApiResult<List<OrderDto>>> Handle(AddOrderCommand request,
+        public async Task<ApiResult<List<OrderDto>>> Handle(CreateOrderCommand request,
             CancellationToken cancellationToken)
         {
             //check account
             var account = await _accountService.GetAccountInfo();
             if (account.AccountType == AccountType.Vendor) return ApiResult<List<OrderDto>>.Forbidden();
 
+
             //get current Cart
-            var cart = _context.Carts.Where(x => x.ClientId == account.Id).Include(x => x.Product)
-                .AsEnumerable().GroupBy(x => x.Product.VendorId);
+            var cart = (await _context.Carts.Where(x => x.ClientId == account.Id).Include(x => x.Product)
+                .ToListAsync(cancellationToken));
+            //group CartItems by Vendor
+            var groupedCart = cart.GroupBy(x => x.Product.VendorId);
+
+            Coupon coupon = null;
+
+            //check Coupon
+            if (request.CouponCode != null)
+            {
+                coupon = await _context.Coupons.Where(x => x.Code == request.CouponCode)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (coupon == null || !_couponService.IsValid(coupon))
+                        return ApiResult<List<OrderDto>>.Failure("Provided Coupon is invalid");
+                if (cart.All(x => x.Product.VendorId != coupon.VendorId))
+                    return ApiResult<List<OrderDto>>.Failure("Provided Coupon does not apply to any Product");
+            }
 
             var orders = new List<Order>();
 
-            foreach (var vendor in cart)
+            foreach (var vendor in groupedCart)
             {
                 var order = new Order
                 {
@@ -54,6 +76,9 @@ namespace Application.Orders.AddOrder
 
                 var items = new List<OrderItem>();
 
+                var checkCoupon = false;
+                if (coupon != null) checkCoupon = coupon.VendorId == vendor.Key;
+
                 //check Product availability
                 foreach (var cartItem in vendor)
                 {
@@ -65,7 +90,7 @@ namespace Application.Orders.AddOrder
                     {
                         Order = order,
                         ProductId = cartItem.ProductId,
-                        Value = cartItem.Product.Value,
+                        Value = checkCoupon ? cartItem.Product.Value * (100 - coupon.Amount) / 100 : cartItem.Product.Value,
                         Amount = cartItem.Amount,
                     });
                 }

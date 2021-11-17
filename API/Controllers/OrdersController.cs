@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Core;
 using Application.Orders;
-using Application.Orders.AddOrder;
+using Application.Orders.CreateOrder;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,9 +21,9 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<List<OrderDto>>> AddOrder()
+        public async Task<ActionResult<List<OrderDto>>> AddOrder(CreateOrderCommand command)
         {
-            return HandleResult(await Mediator.Send(new AddOrderCommand()));
+            return HandleResult(await Mediator.Send(command));
         }
 
         [Authorize]
