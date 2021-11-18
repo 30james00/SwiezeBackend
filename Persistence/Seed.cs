@@ -27,7 +27,7 @@ namespace Persistence
             var vendorCount = isCompact ? 2 : 10;
 
             //private const int ContactCount = ClientCount + VendorCount;
-            var AccountCount = clientCount + vendorCount;
+            var accountCount = clientCount + vendorCount;
 
             var clientIndex = 1;
             var contactIndex = 1;
@@ -52,7 +52,7 @@ namespace Persistence
                 var accountFaker = AccountFaker.Create();
 
 
-                users.AddRange(accountFaker.GenerateBetween(AccountCount, AccountCount));
+                users.AddRange(accountFaker.GenerateBetween(accountCount, accountCount));
 
                 foreach (var user in users)
                 {
@@ -81,7 +81,7 @@ namespace Persistence
 
                     if (!context.Reviews.Any())
                     {
-                        var reviewFaker = ReviewFaker.Create(clients, vendors);
+                        var reviewFaker = ReviewFaker.Create(orders);
                         reviews.AddRange(reviewFaker.GenerateBetween(reviewCount, reviewCount));
 
                         await context.Reviews.AddRangeAsync(reviews);
@@ -92,7 +92,7 @@ namespace Persistence
                 if (!context.Contacts.Any())
                 {
                     var contactFaker = ContactFaker.CreateWithAccount(contactIndex, 0, users);
-                    contacts.AddRange(contactFaker.GenerateBetween(AccountCount, AccountCount));
+                    contacts.AddRange(contactFaker.GenerateBetween(accountCount, accountCount));
 
                     await context.Contacts.AddRangeAsync(contacts);
                     await context.SaveChangesAsync();

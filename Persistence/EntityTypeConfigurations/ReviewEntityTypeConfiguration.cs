@@ -8,6 +8,7 @@ namespace Persistence.EntityTypeConfigurations
     {
         public void Configure(EntityTypeBuilder<Review> builder)
         {
+            builder.Property(x => x.CreationTime).IsRequired();
             builder.Property(x => x.NumberOfStars).IsRequired();
             builder.Property(x => x.Description).HasMaxLength(800);
         }

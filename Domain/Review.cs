@@ -5,15 +5,13 @@ namespace Domain
     public class Review
     {
         public Guid Id { get; set; }
+        public DateTime CreationTime { get; set; }
         public int NumberOfStars { get; set; }
 #nullable enable
         public string? Description { get; set; }
 #nullable disable
 
-        public Guid ClientId { get; set; }
-        public Client Client { get; set; }
-
-        public Guid VendorId { get; set; }
-        public Vendor Vendor { get; set; }
+        public Guid OrderId { get; set; }
+        public Order Order { get; set; }
     }
 }
