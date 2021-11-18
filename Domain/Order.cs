@@ -16,6 +16,7 @@ namespace Domain
         public Guid VendorId { get; set; }
         public Vendor Vendor { get; set; }
 
+        public Review Review { get; set; }
         public List<OrderItem> OrderItems { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace Persistence
             var categoryCount = isCompact ? 2 : 10;
             var clientCount = isCompact ? 2 : 10;
             var couponCount = isCompact ? 4 : 20;
-            var reviewCount = isCompact ? 4 : 50;
+            var reviewCount = isCompact ? 3 : 30;
             var orderCount = isCompact ? 5 : 50;
             var orderItemCount = isCompact ? 10 : 100;
             var productCount = isCompact ? 10 : 100;
@@ -78,15 +78,6 @@ namespace Persistence
 
                     await context.Vendors.AddRangeAsync(vendors);
                     await context.SaveChangesAsync();
-
-                    if (!context.Reviews.Any())
-                    {
-                        var reviewFaker = ReviewFaker.Create(orders);
-                        reviews.AddRange(reviewFaker.GenerateBetween(reviewCount, reviewCount));
-
-                        await context.Reviews.AddRangeAsync(reviews);
-                        await context.SaveChangesAsync();
-                    }
                 }
 
                 if (!context.Contacts.Any())
@@ -160,6 +151,15 @@ namespace Persistence
                             orderItems.AddRange(orderItemFaker.GenerateBetween(orderItemCount, orderItemCount));
 
                             await context.OrderItems.AddRangeAsync(orderItems);
+                            await context.SaveChangesAsync();
+                        }
+                        
+                        if (!context.Reviews.Any())
+                        {
+                            var reviewFaker = ReviewFaker.Create(0, orders);
+                            reviews.AddRange(reviewFaker.GenerateBetween(reviewCount, reviewCount));
+
+                            await context.Reviews.AddRangeAsync(reviews);
                             await context.SaveChangesAsync();
                         }
                     }

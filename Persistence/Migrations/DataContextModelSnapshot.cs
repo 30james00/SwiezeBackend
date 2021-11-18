@@ -389,9 +389,6 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("ClientId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("timestamp without time zone");
 
@@ -405,16 +402,10 @@ namespace Persistence.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("VendorId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("VendorId");
+                    b.HasIndex("OrderId")
+                        .IsUnique();
 
                     b.ToTable("Reviews");
                 });
@@ -725,19 +716,11 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Review", b =>
                 {
-                    b.HasOne("Domain.Client", null)
-                        .WithMany("Reviews")
-                        .HasForeignKey("ClientId");
-
                     b.HasOne("Domain.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
+                        .WithOne("Review")
+                        .HasForeignKey("Domain.Review", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Domain.Vendor", null)
-                        .WithMany("Reviews")
-                        .HasForeignKey("VendorId");
 
                     b.Navigation("Order");
                 });
@@ -823,13 +806,13 @@ namespace Persistence.Migrations
                     b.Navigation("Carts");
 
                     b.Navigation("Orders");
-
-                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("Domain.Order", b =>
                 {
                     b.Navigation("OrderItems");
+
+                    b.Navigation("Review");
                 });
 
             modelBuilder.Entity("Domain.Product", b =>
@@ -853,8 +836,6 @@ namespace Persistence.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Products");
-
-                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }
