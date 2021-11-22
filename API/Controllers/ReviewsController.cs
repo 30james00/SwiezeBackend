@@ -14,9 +14,10 @@ namespace API.Controllers
     {
         [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<PagedList<ReviewDto>>> ListReviews()
+        public async Task<ActionResult<PagedList<ReviewDto>>> ListReviews([FromQuery] ReviewParams reviewParams,
+            [FromQuery] SortingParams sortingParams)
         {
-            return HandlePagedResult(await Mediator.Send(new ListReviewQuery()));
+            return HandlePagedResult(await Mediator.Send(new ListReviewQuery(reviewParams, sortingParams)));
         }
 
         [Authorize]
