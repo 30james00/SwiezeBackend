@@ -10,7 +10,8 @@ using Persistence;
 
 namespace Application.Reviews
 {
-    public record ListReviewQuery(ReviewParams ReviewParams, SortingParams SortingParams) : IRequest<ApiResult<PagedList<ReviewDto>>>;
+    public record ListReviewQuery
+        (ReviewParams ReviewParams, SortingParams SortingParams) : IRequest<ApiResult<PagedList<ReviewDto>>>;
 
     public class ListReviewQueryHandler : IRequestHandler<ListReviewQuery, ApiResult<PagedList<ReviewDto>>>
     {
@@ -43,7 +44,15 @@ namespace Application.Reviews
                     break;
             }
 
-            return ApiResult<PagedList<ReviewDto>>.Success(await PagedList<ReviewDto>.CreateAsync(query, 10, 10));
+            //Filter NumberOfStars
+            if (request.ReviewParams.NumberOfStars != 0)
+                query = query.Where(x => x.NumberOfStars == request.ReviewParams.NumberOfStars);
+
+            //Sort
+            query = request.SortingParams.GetData(query, "CreationDate");
+
+            return ApiResult<PagedList<ReviewDto>>.Success(await PagedList<ReviewDto>.CreateAsync(query,
+                request.ReviewParams.PageNumber, request.ReviewParams.PageSize));
         }
     }
 }

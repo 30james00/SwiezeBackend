@@ -9,6 +9,7 @@ using Application.Coupons.EditCoupon;
 using Application.Orders;
 using Application.Products;
 using Application.Reviews;
+using Application.Reviews.EditReview;
 using Application.UnitTypes;
 using AutoMapper;
 using Domain;
@@ -51,6 +52,7 @@ namespace Application.Core
             
             //Review
             CreateMap<Review, ReviewDto>();
+            CreateMap<EditReviewCommand, Review>();
 
             //UnitType
             CreateMap<UnitType, UnitTypeDto>();

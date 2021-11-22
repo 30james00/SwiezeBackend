@@ -32,8 +32,7 @@ namespace Application.Reviews
             if (review == null) return null;
 
             //check owner
-            if ((account.AccountType == AccountType.Client && review.Order.ClientId != account.Id) ||
-                (account.AccountType == AccountType.Vendor && review.Order.VendorId != account.Id))
+            if (account.AccountType != AccountType.Client || review.Order.ClientId != account.Id)
                 return ApiResult<Unit>.Forbidden();
 
             _context.Remove(review);
