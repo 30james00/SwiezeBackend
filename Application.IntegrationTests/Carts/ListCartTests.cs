@@ -22,7 +22,7 @@ namespace Application.IntegrationTests.Carts
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeOfType<List<CartDto>>();
-            result.Value.Count.Should().Be(1);
+            result.Value.Count.Should().Be(3);
         }
     }
 }

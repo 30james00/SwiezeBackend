@@ -38,7 +38,7 @@ namespace Application.IntegrationTests.Products
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeOfType<PagedList<ProductDto>>();
-            result.Value.Should().HaveCount(2);
+            result.Value.Should().HaveCount(1);
         }
 
         [Test]
@@ -49,29 +49,29 @@ namespace Application.IntegrationTests.Products
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeOfType<PagedList<ProductDto>>();
-            result.Value.Should().HaveCount(2);
+            result.Value.Should().HaveCount(3);
         }
 
         [Test]
         public async Task ListWithCategoryFilter()
         {
             var result = await SendAsync(new ListProductQuery(new ProductParams
-                { Category = Guid.Parse("391c1193-0b16-d461-21ea-f616c65f3fe2") }, new SortingParams()));
+                { Category = Guid.Parse("fd1d78fe-4519-f216-0e16-dd8ef1e3bcea") }, new SortingParams()));
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeOfType<PagedList<ProductDto>>();
-            result.Value.Should().HaveCount(4);
+            result.Value.Should().HaveCount(3);
         }
 
         [Test]
         public async Task ListWithNameFilter()
         {
             var result = await SendAsync(new ListProductQuery(new ProductParams
-                { Name = "Gloves" }, new SortingParams()));
+                { Name = "Keyboard" }, new SortingParams()));
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeOfType<PagedList<ProductDto>>();
-            result.Value.Should().HaveCount(3);
+            result.Value.Should().HaveCount(1);
         }
 
         [Test]

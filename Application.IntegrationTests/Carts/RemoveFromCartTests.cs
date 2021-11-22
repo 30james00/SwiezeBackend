@@ -22,7 +22,7 @@ namespace Application.IntegrationTests.Carts
         [Test]
         public async Task DeleteExistingProduct()
         {
-            var query = new RemoveFromCartCommand(Guid.Parse("00000003-0000-0000-0000-000000000000"), 9);
+            var query = new RemoveFromCartCommand(Guid.Parse("00000002-0000-0000-0000-000000000000"), 7);
             var result = await SendAsync(query);
             var check = await CountAsync<Cart>();
 
@@ -33,7 +33,7 @@ namespace Application.IntegrationTests.Carts
         [Test]
         public async Task RemoveExistingProduct()
         {
-            var query = new RemoveFromCartCommand(Guid.Parse("00000003-0000-0000-0000-000000000000"), 1);
+            var query = new RemoveFromCartCommand(Guid.Parse("00000002-0000-0000-0000-000000000000"), 1);
             var result = await SendAsync(query);
             var check = await CountAsync<Cart>();
 
