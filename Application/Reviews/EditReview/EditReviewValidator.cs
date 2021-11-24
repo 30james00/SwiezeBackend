@@ -8,7 +8,7 @@ namespace Application.Reviews.EditReview
         {
             RuleFor(x => x.Id).NotEmpty();
             RuleFor(x => x.NumberOfStars).NotEmpty().GreaterThanOrEqualTo(1).LessThanOrEqualTo(5);
-            RuleFor(x => x.Description).NotEmpty().MaximumLength(800);
+            RuleFor(x => x.Description).MaximumLength(800);
         }
     }
 }
