@@ -45,11 +45,11 @@ namespace Application.Reviews
             }
 
             //Filter NumberOfStars
-            if (request.ReviewParams.NumberOfStars != 0)
+            if (request.ReviewParams.NumberOfStars != null)
                 query = query.Where(x => x.NumberOfStars == request.ReviewParams.NumberOfStars);
 
             //Sort
-            query = request.SortingParams.GetData(query, "CreationDate");
+            query = request.SortingParams.GetData(query, "CreationTime");
 
             return ApiResult<PagedList<ReviewDto>>.Success(await PagedList<ReviewDto>.CreateAsync(query,
                 request.ReviewParams.PageNumber, request.ReviewParams.PageSize));

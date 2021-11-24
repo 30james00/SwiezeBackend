@@ -1,15 +1,20 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Application.Core;
 using Application.Reviews;
+using Domain;
+using FluentAssertions;
 using NUnit.Framework;
+using Persistence.Faker;
 
 namespace Application.IntegrationTests.Reviews
 {
     using static Testing;
-    
+
     public class ListReviewTests : TestBase
     {
-        private readonly ListReviewQuery _query = new ListReviewQuery();
-        
+        private readonly ListReviewQuery _query = new ListReviewQuery(new ReviewParams(), new SortingParams());
+
         [SetUp]
         public async Task SetUp()
         {
@@ -19,9 +24,48 @@ namespace Application.IntegrationTests.Reviews
         [Test]
         public async Task ListClientReviews()
         {
-            await LogInAsUserAsync("");
+            await LogInAsUserAsync("Agustin.Keebler93@yahoo.com");
 
-            await SendAsync(_query);
+            var result = await SendAsync(_query);
+
+            result.Value.Should().BeOfType<PagedList<ReviewDto>>();
+            result.Value.Count.Should().Be(2);
+        }
+
+        [Test]
+        public async Task ListVendorReviews()
+        {
+            await LogInAsUserAsync("Makayla_Gleichner@hotmail.com");
+
+            var result = await SendAsync(_query);
+
+            result.Value.Should().BeOfType<PagedList<ReviewDto>>();
+            result.Value.Count.Should().Be(2);
+        }
+
+        [Test]
+        public async Task ListClientReviewsWithStarFilter()
+        {
+            await LogInAsUserAsync("Agustin.Keebler93@yahoo.com");
+
+            var result =
+                await SendAsync(new ListReviewQuery(new ReviewParams { NumberOfStars = 5 }, new SortingParams()));
+
+            result.Value.Should().BeOfType<PagedList<ReviewDto>>();
+            result.Value.Count.Should().Be(1);
+        }
+        
+        [Test]
+        public async Task ListEmptyReviews()
+        {
+            await LogInAsUserAsync("Agustin.Keebler93@yahoo.com");
+            await ResetState();
+            
+            var result = await SendAsync(_query);
+
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().BeOfType<PagedList<ReviewDto>>();
+            result.Value.Should().HaveCount(0);
         }
     }
 }

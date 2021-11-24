@@ -51,7 +51,9 @@ namespace Application.Core
             );
             
             //Review
-            CreateMap<Review, ReviewDto>();
+            CreateMap<Review, ReviewDto>()
+                .ForMember(x => x.ClientId, o => o.MapFrom(x => x.Order.ClientId))
+                .ForMember(x => x.VendorId, o => o.MapFrom(x => x.Order.VendorId));
             CreateMap<EditReviewCommand, Review>();
 
             //UnitType

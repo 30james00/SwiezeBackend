@@ -6,6 +6,7 @@ namespace Application.Reviews
     public class ReviewDto
     {
         public Guid Id { get; set; }
+        public DateTime CreationTime { get; set; }
         public int NumberOfStars { get; set; }
 #nullable enable
         public string? Description { get; set; }
