@@ -37,11 +37,12 @@ namespace Application.Reviews.CreateReview
             var account = await _accountService.GetAccountInfo();
 
             //check Order
-            var orderClientId = await _context.Orders.Select(x => x.ClientId).FirstOrDefaultAsync(cancellationToken);
-            if (orderClientId == Guid.Empty) return null;
+            var order = await _context.Orders.FirstOrDefaultAsync(cancellationToken);
+            if (order == null) return null;
+            if(order.FulfillmentDate == null) return ApiResult<ReviewDto>.Failure("Order is not fulfilled yet");
 
             //check owner
-            if (account.AccountType != AccountType.Vendor && account.Id == orderClientId)
+            if (account.AccountType != AccountType.Vendor && account.Id == order.Id)
                 return ApiResult<ReviewDto>.Forbidden();
 
             var review = new Review
