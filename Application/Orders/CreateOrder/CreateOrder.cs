@@ -43,8 +43,8 @@ namespace Application.Orders.CreateOrder
 
 
             //get current Cart
-            var cart = (await _context.Carts.Where(x => x.ClientId == account.Id).Include(x => x.Product)
-                .ToListAsync(cancellationToken));
+            var cart = await _context.Carts.Where(x => x.ClientId == account.Id).Include(x => x.Product)
+                .ToListAsync(cancellationToken);
             //group CartItems by Vendor
             var groupedCart = cart.GroupBy(x => x.Product.VendorId);
 
@@ -56,7 +56,7 @@ namespace Application.Orders.CreateOrder
                 coupon = await _context.Coupons.Where(x => x.Code == request.CouponCode)
                     .FirstOrDefaultAsync(cancellationToken);
                 if (coupon == null || !_couponService.IsValid(coupon))
-                        return ApiResult<List<OrderDto>>.Failure("Provided Coupon is invalid");
+                    return ApiResult<List<OrderDto>>.Failure("Provided Coupon is invalid");
                 if (cart.All(x => x.Product.VendorId != coupon.VendorId))
                     return ApiResult<List<OrderDto>>.Failure("Provided Coupon does not apply to any Product");
             }
@@ -77,7 +77,12 @@ namespace Application.Orders.CreateOrder
                 var items = new List<OrderItem>();
 
                 var checkCoupon = false;
-                if (coupon != null) checkCoupon = coupon.VendorId == vendor.Key;
+                if (coupon != null)
+                {
+                    checkCoupon = coupon.VendorId == vendor.Key;
+                    if (!_couponService.IsValid(coupon)) checkCoupon = false;
+                    if (checkCoupon) coupon.AmountOfUses--;
+                }
 
                 //check Product availability
                 foreach (var cartItem in vendor)
@@ -90,7 +95,9 @@ namespace Application.Orders.CreateOrder
                     {
                         Order = order,
                         ProductId = cartItem.ProductId,
-                        Value = checkCoupon ? cartItem.Product.Value * (100 - coupon.Amount) / 100 : cartItem.Product.Value,
+                        Value = checkCoupon
+                            ? cartItem.Product.Value * (100 - coupon.Amount) / 100
+                            : cartItem.Product.Value,
                         Amount = cartItem.Amount,
                     });
                 }
