@@ -58,8 +58,8 @@ namespace Application.IntegrationTests.Reviews
         [Test]
         public async Task ListEmptyReviews()
         {
-            await LogInAsUserAsync("Agustin.Keebler93@yahoo.com");
             await ResetState();
+            await RunAsClientUserAsync();
             
             var result = await SendAsync(_query);
 
