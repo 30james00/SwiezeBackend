@@ -81,7 +81,7 @@ namespace Application.Orders.CreateOrder
                 {
                     checkCoupon = coupon.VendorId == vendor.Key;
                     if (!_couponService.IsValid(coupon)) checkCoupon = false;
-                    if (checkCoupon) coupon.AmountOfUses--;
+                    if (checkCoupon && coupon.AmountOfUses != null) coupon.AmountOfUses--;
                 }
 
                 //check Product availability

@@ -42,7 +42,7 @@ namespace Application.Reviews.CreateReview
             if(order.FulfillmentDate == null) return ApiResult<ReviewDto>.Failure("Order is not fulfilled yet");
 
             //check owner
-            if (account.AccountType != AccountType.Vendor && account.Id == order.Id)
+            if (account.AccountType == AccountType.Vendor || account.Id != order.ClientId)
                 return ApiResult<ReviewDto>.Forbidden();
 
             var review = new Review
