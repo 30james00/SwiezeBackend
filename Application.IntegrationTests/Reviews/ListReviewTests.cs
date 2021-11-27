@@ -1,11 +1,8 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Core;
 using Application.Reviews;
-using Domain;
 using FluentAssertions;
 using NUnit.Framework;
-using Persistence.Faker;
 
 namespace Application.IntegrationTests.Reviews
 {

@@ -43,7 +43,9 @@ namespace Application.Reviews.EditReview
             if (account.AccountType != AccountType.Client || review.Order.ClientId != account.Id)
                 return ApiResult<ReviewDto>.Forbidden();
 
-            _mapper.Map(request, review);
+            review.Description = request.Description;
+            review.CreationTime = DateTime.Now;
+            review.NumberOfStars = request.NumberOfStars;
 
             var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 

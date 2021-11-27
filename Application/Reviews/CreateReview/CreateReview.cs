@@ -37,9 +37,9 @@ namespace Application.Reviews.CreateReview
             var account = await _accountService.GetAccountInfo();
 
             //check Order
-            var order = await _context.Orders.FirstOrDefaultAsync(cancellationToken);
+            var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == request.OrderId, cancellationToken);
             if (order == null) return null;
-            if(order.FulfillmentDate == null) return ApiResult<ReviewDto>.Failure("Order is not fulfilled yet");
+            if (order.FulfillmentDate == null) return ApiResult<ReviewDto>.Failure("Order is not fulfilled yet");
 
             //check owner
             if (account.AccountType == AccountType.Vendor || account.Id != order.ClientId)
