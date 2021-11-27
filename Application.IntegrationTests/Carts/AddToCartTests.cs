@@ -17,7 +17,7 @@ namespace Application.IntegrationTests.Carts
             await SeedAsync();
             await LogInAsUserAsync("Agustin.Keebler93@yahoo.com");
 
-            var query = new AddToCartCommand(Guid.Parse("00000003-0000-0000-0000-000000000000"), 5);
+            var query = new AddToCartCommand(Guid.Parse("00000004-0000-0000-0000-000000000000"), 5);
             var result = await SendAsync(query);
             var check = await CountAsync<Cart>();
 

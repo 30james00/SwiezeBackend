@@ -1,8 +1,9 @@
 using System;
+using Domain;
 
-namespace Domain
+namespace Application.Reviews
 {
-    public class Review
+    public class ReviewDto
     {
         public Guid Id { get; set; }
         public DateTime CreationTime { get; set; }
@@ -11,7 +12,8 @@ namespace Domain
         public string? Description { get; set; }
 #nullable disable
 
-        public Guid OrderId { get; set; }
-        public Order Order { get; set; }
+        public Guid ClientId { get; set; }
+
+        public Guid VendorId { get; set; }
     }
 }

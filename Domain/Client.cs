@@ -16,6 +16,5 @@ namespace Domain
 
         public List<Cart> Carts { get; set; }
         public List<Order> Orders { get; set; }
-        public List<Review> Reviews { get; set; }
     }
 }

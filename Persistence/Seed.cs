@@ -20,14 +20,14 @@ namespace Persistence
             var categoryCount = isCompact ? 2 : 10;
             var clientCount = isCompact ? 2 : 10;
             var couponCount = isCompact ? 4 : 20;
-            var reviewCount = isCompact ? 4 : 50;
+            var reviewCount = isCompact ? 3 : 30;
             var orderCount = isCompact ? 5 : 50;
             var orderItemCount = isCompact ? 10 : 100;
             var productCount = isCompact ? 10 : 100;
             var vendorCount = isCompact ? 2 : 10;
 
             //private const int ContactCount = ClientCount + VendorCount;
-            var AccountCount = clientCount + vendorCount;
+            var accountCount = clientCount + vendorCount;
 
             var clientIndex = 1;
             var contactIndex = 1;
@@ -52,7 +52,7 @@ namespace Persistence
                 var accountFaker = AccountFaker.Create();
 
 
-                users.AddRange(accountFaker.GenerateBetween(AccountCount, AccountCount));
+                users.AddRange(accountFaker.GenerateBetween(accountCount, accountCount));
 
                 foreach (var user in users)
                 {
@@ -78,21 +78,12 @@ namespace Persistence
 
                     await context.Vendors.AddRangeAsync(vendors);
                     await context.SaveChangesAsync();
-
-                    if (!context.Reviews.Any())
-                    {
-                        var reviewFaker = ReviewFaker.Create(clients, vendors);
-                        reviews.AddRange(reviewFaker.GenerateBetween(reviewCount, reviewCount));
-
-                        await context.Reviews.AddRangeAsync(reviews);
-                        await context.SaveChangesAsync();
-                    }
                 }
 
                 if (!context.Contacts.Any())
                 {
                     var contactFaker = ContactFaker.CreateWithAccount(contactIndex, 0, users);
-                    contacts.AddRange(contactFaker.GenerateBetween(AccountCount, AccountCount));
+                    contacts.AddRange(contactFaker.GenerateBetween(accountCount, accountCount));
 
                     await context.Contacts.AddRangeAsync(contacts);
                     await context.SaveChangesAsync();
@@ -160,6 +151,15 @@ namespace Persistence
                             orderItems.AddRange(orderItemFaker.GenerateBetween(orderItemCount, orderItemCount));
 
                             await context.OrderItems.AddRangeAsync(orderItems);
+                            await context.SaveChangesAsync();
+                        }
+                        
+                        if (!context.Reviews.Any())
+                        {
+                            var reviewFaker = ReviewFaker.Create(0, orders);
+                            reviews.AddRange(reviewFaker.GenerateBetween(reviewCount, reviewCount));
+
+                            await context.Reviews.AddRangeAsync(reviews);
                             await context.SaveChangesAsync();
                         }
                     }

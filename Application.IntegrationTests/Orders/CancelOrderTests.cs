@@ -11,13 +11,15 @@ namespace Application.IntegrationTests.Orders
     
     public class CancelOrderTests: TestBase
     {
+        private readonly Guid _id = Guid.Parse("19fe6067-d019-dbcf-ab00-672b07f847d4");
+        
         [Test]
         public async Task CancelExistingOrder()
         {
             await SeedAsync();
             await LogInAsUserAsync("Carey16@yahoo.com");
             
-            var command = new CancelOrderCommand(Guid.Parse("fea34ec8-cffc-6aa3-59d6-5d72cfdfd4d0"));
+            var command = new CancelOrderCommand(_id);
             var result = await SendAsync(command);
             
             result.IsSuccess.Should().BeTrue();
@@ -32,7 +34,7 @@ namespace Application.IntegrationTests.Orders
             await SeedAsync();
             await LogInAsUserAsync("Agustin.Keebler93@yahoo.com");
             
-            var command = new CancelOrderCommand(Guid.Parse("fea34ec8-cffc-6aa3-59d6-5d72cfdfd4d0"));
+            var command = new CancelOrderCommand(_id);
             var result = await SendAsync(command);
             
             result.IsForbidden.Should().BeTrue();
