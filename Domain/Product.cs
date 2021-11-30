@@ -10,6 +10,7 @@ namespace Domain
         public int Value { get; set; }
         public int Unit { get; set; }
         public int Stock { get; set; }
+        public string PhotoUrl { get; set; }
 
         public Guid UnitTypeId { get; set; }
         public UnitType UnitType { get; set; }
