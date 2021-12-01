@@ -22,6 +22,7 @@ namespace Application.IntegrationTests.Products
             Stock = 2000,
             UnitTypeId = GuidHelper.ToGuid(1),
             Categories = new List<Guid> { GuidHelper.ToGuid(1) },
+            Photos = new List<string>()
         };
 
         private readonly UnitType _unitType = new UnitType
@@ -70,7 +71,7 @@ namespace Application.IntegrationTests.Products
 
             result.Value.Should().BeOfType<ProductDto>();
             result.Value.Should().BeEquivalentTo(_command, o => o.ExcludingMissingMembers());
-            newProduct.Should().BeEquivalentTo(_command, o => o.ExcludingMissingMembers());
+            newProduct.Should().BeEquivalentTo(_command, o => o.ExcludingMissingMembers().Excluding(x => x.Photos));
         }
 
         [Test]

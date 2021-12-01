@@ -13,5 +13,6 @@ namespace Application.Products
         public Guid UnitTypeId { get; set; }
         public Guid VendorId { get; set; }
         public List<Guid> Categories { get; set; }
+        public List<string> Photos { get; set; }
     }
 }

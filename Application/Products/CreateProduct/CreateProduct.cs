@@ -22,6 +22,7 @@ namespace Application.Products.CreateProduct
         public int Stock { get; set; }
         public Guid UnitTypeId { get; set; }
         public List<Guid> Categories { get; set; }
+        public List<string> Photos { get; set; }
     }
 
     public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, ApiResult<ProductDto>>
@@ -46,8 +47,9 @@ namespace Application.Products.CreateProduct
                 return ApiResult<ProductDto>.Failure("Failed to create new Product - user is not Vendor");
 
             var productCategories = new List<ProductCategory>();
+            var photos = new List<Photo>();
 
-            var categories = _context.Categories.Select(x => x.Id).ToList();
+            var categories = await _context.Categories.Select(x => x.Id).ToListAsync(cancellationToken);
             var unitType = await _context.UnitTypes.Select(x => x.Id)
                 .FirstOrDefaultAsync(x => x == request.UnitTypeId, cancellationToken: cancellationToken);
 
@@ -61,9 +63,21 @@ namespace Application.Products.CreateProduct
                 Stock = request.Stock,
                 UnitTypeId = request.UnitTypeId,
                 VendorId = accountInfo.Id,
+                Photos = photos,
                 ProductCategories = productCategories,
             };
 
+            //add Photos
+            if (photos.Count != 0)
+                foreach (var photoId in request.Photos)
+                {
+                    var photo = await _context.Photos.FindAsync(photoId);
+                    //check if Photo exists
+                    if (photo == null) return ApiResult<ProductDto>.Failure("Chosen Photo doesn't exist");
+                    photos.Add(photo);
+                }
+
+            //add Categories relationships
             foreach (var id in request.Categories)
             {
                 if (categories.Contains(id))

@@ -47,12 +47,10 @@ namespace Application.Core
             CreateMap<Photo, PhotoDto>();
 
             //Product
-            CreateMap<Product, ProductDto>().ForMember(
-                x => x.Categories,
-                o => o.MapFrom(
-                    x => x.ProductCategories.Select(p => p.CategoryId).ToList()
-                )
-            );
+            CreateMap<Product, ProductDto>()
+                .ForMember(x => x.Categories,
+                    o => o.MapFrom(x => x.ProductCategories.Select(p => p.CategoryId).ToList()))
+                .ForMember(x => x.Photos, o => o.MapFrom(x => x.Photos.Select(p => p.Url).ToList()));
 
             //Review
             CreateMap<Review, ReviewDto>()
