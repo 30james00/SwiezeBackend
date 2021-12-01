@@ -22,6 +22,7 @@ namespace Application.Products.EditProduct
         public int Stock { get; set; }
         public Guid UnitTypeId { get; set; }
         public List<Guid> Categories { get; set; }
+        public List<string> Photos { get; set; }
     }
 
     public class EditProductCommandHandler : IRequestHandler<EditProductCommand, ApiResult<ProductDto>>
@@ -54,6 +55,7 @@ namespace Application.Products.EditProduct
             if (product.VendorId != vendorId) return ApiResult<ProductDto>.Forbidden();
 
             var productCategories = new List<ProductCategory>();
+            var photos = new List<Photo>();
 
             var categories = _context.Categories.Select(x => x.Id).ToList();
             var unitType = await _context.UnitTypes.Select(x => x.Id)
@@ -65,6 +67,16 @@ namespace Application.Products.EditProduct
             var productCategoriesToDelete =
                 await _context.ProductCategories.Where(x => x.ProductId == request.Id).ToListAsync(cancellationToken);
             _context.ProductCategories.RemoveRange(productCategoriesToDelete);
+
+            //add Photos
+            if (photos.Count != 0)
+                foreach (var photoId in request.Photos)
+                {
+                    var photo = await _context.Photos.FindAsync(photoId);
+                    //check if Photo exists
+                    if (photo == null) return ApiResult<ProductDto>.Failure("Chosen Photo doesn't exist");
+                    photos.Add(photo);
+                }
 
             //add new ProductCategories
             foreach (var id in request.Categories)
@@ -88,6 +100,7 @@ namespace Application.Products.EditProduct
             product.Stock = request.Stock;
             product.UnitTypeId = request.UnitTypeId;
             product.ProductCategories = productCategories;
+            product.Photos = photos;
 
             var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 

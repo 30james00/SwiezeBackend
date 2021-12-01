@@ -31,4 +31,6 @@ jobs:
       env:
         ConnectionStrings:PostgreSQL: ${{secrets.TEST_POSTGRES}}
         TokenKey: ${{secrets.TOKEN_KEY}}
-        Cloudinary: ${{secrets.CLOUDINARY}}
+        Cloudinary:CloudName: ${{secrets.CLOUDINARY_CLOUDNAME}}
+        Cloudinary:ApiKey: ${{secrets.CLOUDINARY_APIKEY}}
+        Cloudinary:ApiSecret: ${{secrets.CLOUDINARY_APISECRET}}

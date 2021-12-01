@@ -22,6 +22,7 @@ namespace Application.IntegrationTests.Products
             Stock = 2000,
             UnitTypeId = GuidHelper.ToGuid(1),
             Categories = new List<Guid> { GuidHelper.ToGuid(1) },
+            Photos = new List<string>()
         };
 
         private readonly UnitType _unitType = new UnitType
@@ -51,9 +52,9 @@ namespace Application.IntegrationTests.Products
 
             result.Value.Should().BeOfType<ProductDto>();
             result.Value.Should().BeEquivalentTo(_command, o => o.ExcludingMissingMembers());
-            product.Should().BeEquivalentTo(_command, o => o.ExcludingMissingMembers());
-        }        
-        
+            product.Should().BeEquivalentTo(_command, o => o.ExcludingMissingMembers().Excluding(x => x.Photos));
+        }
+
         [Test]
         public async Task CreateNewProductAsClient()
         {
@@ -65,8 +66,8 @@ namespace Application.IntegrationTests.Products
             var result = await SendAsync(_command);
 
             result.Error.Should().Be("Failed to create new Product - user is not Vendor");
-        }        
-        
+        }
+
         [Test]
         public async Task CreateNewProductWithFakeCategory()
         {
@@ -77,8 +78,8 @@ namespace Application.IntegrationTests.Products
             var result = await SendAsync(_command);
 
             result.Error.Should().Be("Chosen Category doesn't exist");
-        }        
-        
+        }
+
         [Test]
         public async Task CreateNewProductWithFakeUnitType()
         {

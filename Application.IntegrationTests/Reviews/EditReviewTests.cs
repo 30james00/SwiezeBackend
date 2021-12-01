@@ -8,8 +8,7 @@ using NUnit.Framework;
 namespace Application.IntegrationTests.Reviews
 {
     using static Testing;
-    
-    public class EditReviewTests : TestBase 
+    public class EditReviewTests : TestBase
     {
         [Test]
         public async Task EditReview()

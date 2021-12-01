@@ -13,6 +13,7 @@ namespace Application.Products.EditProduct
             RuleFor(x => x.Stock).NotEmpty().GreaterThanOrEqualTo(1);
             RuleFor(x => x.UnitTypeId).NotEmpty();
             RuleForEach(x => x.Categories).NotEmpty();
+            RuleForEach(x => x.Photos).NotEmpty();
         }
     }
 }
