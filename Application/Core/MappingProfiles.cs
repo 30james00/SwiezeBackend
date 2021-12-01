@@ -7,6 +7,7 @@ using Application.Contacts.EditContact;
 using Application.Coupons;
 using Application.Coupons.EditCoupon;
 using Application.Orders;
+using Application.Photos;
 using Application.Products;
 using Application.Reviews;
 using Application.Reviews.EditReview;
@@ -42,6 +43,9 @@ namespace Application.Core
                 o => o.MapFrom(
                     x => x.OrderItems.ToList()));
 
+            //Photo
+            CreateMap<Photo, PhotoDto>();
+
             //Product
             CreateMap<Product, ProductDto>().ForMember(
                 x => x.Categories,
@@ -49,7 +53,7 @@ namespace Application.Core
                     x => x.ProductCategories.Select(p => p.CategoryId).ToList()
                 )
             );
-            
+
             //Review
             CreateMap<Review, ReviewDto>()
                 .ForMember(x => x.ClientId, o => o.MapFrom(x => x.Order.ClientId))

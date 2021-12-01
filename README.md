@@ -8,6 +8,9 @@
 1. ```dotnet user-secrets init -p API/```
 2. ```dotnet user-secrets set "ConnectionStrings:PostgreSQL" "Host=localhost; Database=swieze; Username=postgres; Password=swiezeWarzywa" -p API/```
 3. ```dotnet user-secrets set "TokenKey" "very secur password" -p API/```
+4. Setup Cloudinary  
+   ```type .\input.json | dotnet user-secrets set -p API/```
+   ```cat ./input.json | dotnet user-secrets set -p API/```
 
 # Startup
 1. ```docker-compose up``` or Rider Configuration
