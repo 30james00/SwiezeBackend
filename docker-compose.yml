@@ -1,6 +1,20 @@
-version: "3.9"
+version: "3.8"
 
-services: 
+services:
+  
+  dotnet:
+    build: .
+    ports:
+      - "5000:80"
+    environment:
+      - ConnectionStrings:PostgreSQL=${POSTGRES}
+      - TokenKey=${TOKEN}
+      - Cloudinary:CloudName=${CLOUDINARY_CLOUDNAME}
+      - Cloudinary:ApiKey=${CLOUDINARY_APIKEY}
+      - Cloudinary:ApiSecret=${CLOUDINARY_APISECRET}
+    networks:
+      - backend
+  
   postgres:
     image: postgres:latest
     volumes:
@@ -9,7 +23,13 @@ services:
       - POSTGRES_PASSWORD=swiezeWarzywa
     ports:
       - 5432:5432
+    networks:
+      - backend
 
 volumes:
   swiezePostgres:
+    
+networks:
+  backend:
+    driver: bridge
   
