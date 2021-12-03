@@ -16,7 +16,7 @@ namespace Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.10")
+                .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
             modelBuilder.Entity("Domain.Account", b =>
@@ -257,6 +257,9 @@ namespace Persistence.Migrations
                     b.Property<DateTime?>("FulfillmentDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<bool>("IsCanceled")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("timestamp without time zone");
 
@@ -278,11 +281,17 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -291,6 +300,26 @@ namespace Persistence.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("Domain.Photo", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Photos");
                 });
 
             modelBuilder.Entity("Domain.Product", b =>
@@ -380,8 +409,8 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("uuid");
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Description")
                         .HasMaxLength(800)
@@ -390,14 +419,13 @@ namespace Persistence.Migrations
                     b.Property<int>("NumberOfStars")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("VendorId")
+                    b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("VendorId");
+                    b.HasIndex("OrderId")
+                        .IsUnique();
 
                     b.ToTable("Reviews");
                 });
@@ -659,6 +687,15 @@ namespace Persistence.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Domain.Photo", b =>
+                {
+                    b.HasOne("Domain.Product", "Product")
+                        .WithMany("Photos")
+                        .HasForeignKey("ProductId");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Domain.Product", b =>
                 {
                     b.HasOne("Domain.UnitType", "UnitType")
@@ -708,21 +745,13 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Review", b =>
                 {
-                    b.HasOne("Domain.Client", "Client")
-                        .WithMany("Reviews")
-                        .HasForeignKey("ClientId")
+                    b.HasOne("Domain.Order", "Order")
+                        .WithOne("Review")
+                        .HasForeignKey("Domain.Review", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Vendor", "Vendor")
-                        .WithMany("Reviews")
-                        .HasForeignKey("VendorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-
-                    b.Navigation("Vendor");
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Domain.Vendor", b =>
@@ -806,13 +835,13 @@ namespace Persistence.Migrations
                     b.Navigation("Carts");
 
                     b.Navigation("Orders");
-
-                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("Domain.Order", b =>
                 {
                     b.Navigation("OrderItems");
+
+                    b.Navigation("Review");
                 });
 
             modelBuilder.Entity("Domain.Product", b =>
@@ -820,6 +849,8 @@ namespace Persistence.Migrations
                     b.Navigation("Carts");
 
                     b.Navigation("OrderItems");
+
+                    b.Navigation("Photos");
 
                     b.Navigation("ProductCategories");
                 });
@@ -836,8 +867,6 @@ namespace Persistence.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Products");
-
-                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

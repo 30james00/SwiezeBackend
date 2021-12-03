@@ -21,5 +21,6 @@ namespace Domain
 
         public List<Cart> Carts { get; set; }
         public List<OrderItem> OrderItems { get; set; }
+        public List<Photo> Photos { get; set; }
     }
 }

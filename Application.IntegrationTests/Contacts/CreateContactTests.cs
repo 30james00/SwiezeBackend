@@ -35,7 +35,7 @@ namespace Application.IntegrationTests.Contacts
 
             contact.Should().BeOfType<Contact>();
             contact.Should().BeEquivalentTo(command);
-            contact.AccountId.Should().Be(accountId);
+            contact.AccountId.Should().Be(accountId.Item1);
         }
     }
 }

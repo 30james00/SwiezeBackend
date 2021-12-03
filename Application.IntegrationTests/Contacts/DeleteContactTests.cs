@@ -11,14 +11,14 @@ namespace Application.IntegrationTests.Contacts
 {
     using static Testing;
 
-    public class DeleteContactTest : TestBase
+    public class DeleteContactTests : TestBase
     {
         [Test]
         public async Task DeleteExistingContact()
         {
             var accountId = await RunAsClientUserAsync();
             var fakeContact = ContactFaker.Create().Generate();
-            fakeContact.AccountId = accountId;
+            fakeContact.AccountId = accountId.Item1;
             await AddAsync(fakeContact);
 
             var command = new DeleteContactCommand();
@@ -37,7 +37,7 @@ namespace Application.IntegrationTests.Contacts
             var command = new DeleteContactCommand();
             var result = await SendAsync(command);
 
-            result.Should().BeOfType<ApiResult<Unit>>();
+            result.IsSuccess.Should().BeFalse();
         }
     }
 }

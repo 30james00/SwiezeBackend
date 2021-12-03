@@ -31,7 +31,7 @@ namespace Application.IntegrationTests.Contacts
             var accountId = await RunAsClientUserAsync();
             var faker = ContactFaker.Create();
             var fakeContact = faker.Generate();
-            fakeContact.AccountId = accountId;
+            fakeContact.AccountId = accountId.Item1;
 
             var fakeContactId = (await AddAsync(fakeContact)).Id;
 

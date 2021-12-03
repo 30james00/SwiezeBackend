@@ -32,7 +32,7 @@ namespace API.UnitTests
         [Test]
         public void HandleResult_SuccessWithoutValue()
         {
-            var result = HandleResult<Contact>(ApiResult<Contact>.Success(null));
+            var result = HandleResult(ApiResult<Contact>.Success(null));
 
             result.Should().BeOfType<NotFoundResult>();
         }
@@ -40,10 +40,18 @@ namespace API.UnitTests
         [Test]
         public void HandleResult_Failure()
         {
-            var result = HandleResult<Contact>(ApiResult<Contact>.Failure("Error"));
+            var result = HandleResult(ApiResult<Contact>.Failure("Error"));
 
             result.Should().BeOfType<BadRequestObjectResult>();
             result.As<BadRequestObjectResult>().Value.Should().Be("Error");
+        }        
+        
+        [Test]
+        public void HandleResult_Forbidden()
+        {
+            var result = HandleResult(ApiResult<Contact>.Forbidden());
+
+            result.Should().BeOfType<ForbidResult>();
         }
     }
 }

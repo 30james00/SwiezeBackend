@@ -9,7 +9,5 @@ namespace Application.Vendor
     {
         public Guid Id { get; set; }
         public String Name { get; set; }
-
-        public ContactDto Contact { get; set; }
     }
 }

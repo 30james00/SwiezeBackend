@@ -8,6 +8,7 @@ namespace Domain
         public Guid Id { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime? FulfillmentDate { get; set; }
+        public bool IsCanceled { get; set; }
 
         public Guid ClientId { get; set; }
         public Client Client { get; set; }
@@ -15,6 +16,7 @@ namespace Domain
         public Guid VendorId { get; set; }
         public Vendor Vendor { get; set; }
 
+        public Review Review { get; set; }
         public List<OrderItem> OrderItems { get; set; }
     }
 }

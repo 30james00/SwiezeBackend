@@ -5,6 +5,8 @@ namespace Domain
     public class OrderItem
     {
         public Guid Id { get; set; }
+        public int Amount { get; set; }
+        public int Value { get; set; }
         
         public Guid OrderId { get; set; }
         public Order Order { get; set; }

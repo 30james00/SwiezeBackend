@@ -1,6 +1,8 @@
 using Application;
 using Application.Core;
 using Application.Interfaces;
+using Application.Services;
+using Infrastructure.Photos;
 using Infrastructure.Security;
 using MediatR;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
@@ -68,6 +70,11 @@ namespace API.Extensions
             services.AddMediatR(typeof(MediatREntrypoint).Assembly);
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
             services.AddScoped<IUserAccessor, UserAccessor>();
+            services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<ICouponService, CouponService>();
+
+            services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+            services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
 
             return services;
         }
