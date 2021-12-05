@@ -6,6 +6,7 @@ namespace Application.Products
     public class ProductParams : PagingParams
     {
         public string Name { get; set; }
+        public Guid? Vendor { get; set; }
 
         public int MinValue { get; set; } = 0;
         public int MaxValue { get; set; } = 0;

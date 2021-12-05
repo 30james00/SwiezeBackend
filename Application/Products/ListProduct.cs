@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Security.Cryptography.Xml;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
@@ -32,6 +33,10 @@ namespace Application.Products
             //Name filter
             if (request.ProductParams.Name != null)
                 query = query.Where(x => x.Name.ToLower() == request.ProductParams.Name.ToLower());
+            
+            //Vendor filter
+            if (request.ProductParams.Vendor != null)
+                query = query.Where(x => x.VendorId == request.ProductParams.Vendor);
 
             //Value filter
             if (request.ProductParams.MinValue != 0)
