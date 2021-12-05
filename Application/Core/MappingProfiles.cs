@@ -1,6 +1,7 @@
 using System.Linq;
 using Application.Carts;
 using Application.Categories;
+using Application.Clients;
 using Application.Contacts;
 using Application.Contacts.CreateContact;
 using Application.Contacts.EditContact;
@@ -27,6 +28,9 @@ namespace Application.Core
 
             //Category
             CreateMap<Category, CategoryDto>();
+            
+            //Client
+            CreateMap<Client, ClientDto>();
 
             //Contact
             CreateMap<Contact, ContactDto>();
