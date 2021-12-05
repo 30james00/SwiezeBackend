@@ -55,7 +55,7 @@ namespace Application.Products
 
             return result
                 ? ApiResult<Unit>.Success(Unit.Value)
-                : ApiResult<Unit>.Failure("Failed to edit Product");
+                : ApiResult<Unit>.Failure("Failed to delete Product");
         }
     }
 }

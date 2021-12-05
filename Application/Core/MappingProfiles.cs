@@ -12,6 +12,7 @@ using Application.Products;
 using Application.Reviews;
 using Application.Reviews.EditReview;
 using Application.UnitTypes;
+using Application.Vendor;
 using AutoMapper;
 using Domain;
 
@@ -59,6 +60,9 @@ namespace Application.Core
 
             //UnitType
             CreateMap<UnitType, UnitTypeDto>();
+            
+            //Vendor
+            CreateMap<Domain.Vendor, VendorDto>();
         }
     }
 }
