@@ -14,6 +14,7 @@ namespace Persistence
     {
         public static async Task SeedData(DataContext context, UserManager<Account> userManager, bool isCompact)
         {
+            var random = new Random(58177474);
             Randomizer.Seed = new Random(58177474);
 
             var cartCount = isCompact ? 5 : 50;
@@ -31,7 +32,7 @@ namespace Persistence
 
             var clientIndex = 1;
             var contactIndex = 1;
-            var vendorIndex = 1+clientCount;
+            var vendorIndex = 1 + clientCount;
 
             var carts = new List<Cart>();
             var categories = new List<Category>();
@@ -95,9 +96,9 @@ namespace Persistence
                     {
                         unitTypes.AddRange(new[]
                         {
-                            new UnitType { Id = GuidHelper.ToGuid(1), Name = "g" },
-                            new UnitType { Id = GuidHelper.ToGuid(2), Name = "ml" },
-                            new UnitType { Id = GuidHelper.ToGuid(3), Name = "unit" },
+                            new UnitType {Id = GuidHelper.ToGuid(1), Name = "g"},
+                            new UnitType {Id = GuidHelper.ToGuid(2), Name = "ml"},
+                            new UnitType {Id = GuidHelper.ToGuid(3), Name = "unit"},
                         });
 
                         await context.UnitTypes.AddRangeAsync(unitTypes);
@@ -153,13 +154,52 @@ namespace Persistence
                             await context.OrderItems.AddRangeAsync(orderItems);
                             await context.SaveChangesAsync();
                         }
-                        
+
                         if (!context.Reviews.Any())
                         {
                             var reviewFaker = ReviewFaker.Create(0, orders);
                             reviews.AddRange(reviewFaker.GenerateBetween(reviewCount, reviewCount));
 
                             await context.Reviews.AddRangeAsync(reviews);
+                            await context.SaveChangesAsync();
+                        }
+
+                        if (!context.Photos.Any())
+                        {
+                            var photos = new List<Photo>
+                            {
+                                new()
+                                {
+                                    Id = "banana",
+                                    Url = "https://res.cloudinary.com/sbinato/image/upload/v1638805862/banana.png",
+                                    ProductId = products[random.Next(products.Count)].Id
+                                },
+                                new()
+                                {
+                                    Id = "strawberry",
+                                    Url = "https://res.cloudinary.com/sbinato/image/upload/v1638806795/strawberry.jpg",
+                                    ProductId = products[random.Next(products.Count)].Id
+                                },
+                                new()
+                                {
+                                    Id = "apple",
+                                    Url = "https://res.cloudinary.com/sbinato/image/upload/v1638805223/apple.jpg",
+                                    ProductId = products[random.Next(products.Count)].Id
+                                },
+                                new()
+                                {
+                                    Id = "cucumber",
+                                    Url = "https://res.cloudinary.com/sbinato/image/upload/v1638807029/cucumber.png",
+                                    ProductId = products[random.Next(products.Count)].Id
+                                },
+                                new()
+                                {
+                                    Id = "tomato",
+                                    Url = "https://res.cloudinary.com/sbinato/image/upload/v1638807117/tomato.jpg",
+                                    ProductId = products[random.Next(products.Count)].Id
+                                },
+                            };
+                            await context.Photos.AddRangeAsync(photos);
                             await context.SaveChangesAsync();
                         }
                     }
