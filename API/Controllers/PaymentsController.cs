@@ -11,9 +11,9 @@ namespace API.Controllers
     {
         [Authorize]
         [HttpPost("{id:guid}")]
-        public async Task<ActionResult<string>> CreatePayment(CreatePaymentQuery query)
+        public async Task<ActionResult<string>> CreatePayment(Guid id)
         {
-            return HandleResult(await Mediator.Send(query));
+            return HandleResult(await Mediator.Send(new CreatePaymentQuery(id)));
         }
     }
 }

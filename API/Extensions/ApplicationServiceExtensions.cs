@@ -2,6 +2,7 @@ using Application;
 using Application.Core;
 using Application.Interfaces;
 using Application.Services;
+using Infrastructure.Payments;
 using Infrastructure.Photos;
 using Infrastructure.Security;
 using MediatR;
@@ -12,6 +13,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Persistence;
+using Stripe;
+using AccountService = Application.Services.AccountService;
+using CouponService = Application.Services.CouponService;
 
 namespace API.Extensions
 {
@@ -67,12 +71,16 @@ namespace API.Extensions
             });
             services.AddFluentValidationRulesToSwagger();
 
+            //Configure Stripe
+            StripeConfiguration.ApiKey = config["Stripe"];
+
             services.AddMediatR(typeof(MediatREntrypoint).Assembly);
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
             services.AddScoped<IUserAccessor, UserAccessor>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<ICouponService, CouponService>();
 
+            services.AddScoped<IPaymentsAccessor, PaymentsAccessor>();
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
 

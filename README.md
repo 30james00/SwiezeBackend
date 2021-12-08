@@ -11,6 +11,9 @@
 4. Setup Cloudinary  
    ```type .\input.json | dotnet user-secrets set -p API/```
    ```cat ./input.json | dotnet user-secrets set -p API/```
+5. Stripe  
+```dotnet user-secrets set "Stripe" "<StripeSecretKey>" -p Api```
+
 
 # Startup
 1. ```docker-compose up``` or Rider Configuration
@@ -21,6 +24,8 @@
 2. ```dotnet user-secrets set "ConnectionStrings:PostgreSQL" "Host=localhost; Database=swiezeTest; Username=postgres; Password=swiezeWarzywa" -p Application.IntegrationTests/```
 3. ```dotnet user-secrets set "TokenKey" "very secur password" -p Application.IntegrationTests/```
 4. ```dotnet test``` or your run tests in your IDE
-5. Setup Cloudinary
-   ```type ./input.json | dotnet user-secrets set -p Application.IntegrationTests```
-6. ```cat ./input.json | dotnet user-secrets set -p Application.IntegrationTests```
+5. Setup Cloudinary  
+```type ./input.json | dotnet user-secrets set -p Application.IntegrationTests```
+```cat ./input.json | dotnet user-secrets set -p Application.IntegrationTests```
+6. Stripe  
+   ```dotnet user-secrets set "Stripe" "<StripeSecretKey>" -p Application.IntegrationTests```
