@@ -9,22 +9,22 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.Carts.AddToCart
+namespace Application.Carts.CreateCartItem
 {
-    public record AddToCartCommand(Guid ProductId, int Amount) : IRequest<ApiResult<Unit>>;
+    public record CreateCartItemCommand(Guid ProductId, int Amount) : IRequest<ApiResult<Unit>>;
 
-    public class AddToCartCommandHandler : IRequestHandler<AddToCartCommand, ApiResult<Unit>>
+    public class CreateCartItemCommandHandler : IRequestHandler<CreateCartItemCommand, ApiResult<Unit>>
     {
         private readonly DataContext _context;
         private readonly IAccountService _accountService;
 
-        public AddToCartCommandHandler(DataContext context, IAccountService accountService)
+        public CreateCartItemCommandHandler(DataContext context, IAccountService accountService)
         {
             _context = context;
             _accountService = accountService;
         }
 
-        public async Task<ApiResult<Unit>> Handle(AddToCartCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<Unit>> Handle(CreateCartItemCommand request, CancellationToken cancellationToken)
         {
             var account = await _accountService.GetAccountInfo();
 
@@ -41,17 +41,14 @@ namespace Application.Carts.AddToCart
 
             // Product was already in Cart
             if (cartItem != null)
-                cartItem.Amount += request.Amount;
+                return ApiResult<Unit>.Failure("Product already in Cart");
 
-            else
+            await _context.Carts.AddAsync(new Cart
             {
-                await _context.Carts.AddAsync(new Cart
-                {
-                    Amount = request.Amount,
-                    ClientId = account.Id,
-                    ProductId = request.ProductId
-                }, cancellationToken);
-            }
+                Amount = request.Amount,
+                ClientId = account.Id,
+                ProductId = request.ProductId
+            }, cancellationToken);
 
             var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
