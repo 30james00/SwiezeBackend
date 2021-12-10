@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Carts;
 using Application.Carts.AddToCart;
-using Application.Carts.RemoveFromCart;
+using Application.Carts.CreateCartItem;
+using Application.Carts.EditCartItem;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,17 +20,17 @@ namespace API.Controllers
         }
 
         [Authorize]
-        [HttpPost("add")]
-        public async Task<IActionResult> AddToCart(AddToCartCommand command)
+        [HttpPost]
+        public async Task<IActionResult> AddToCart(CreateCartItemCommand itemCommand)
         {
-            return HandleResult(await Mediator.Send(command));
+            return HandleResult(await Mediator.Send(itemCommand));
         }
         
         [Authorize]
-        [HttpPost("delete")]
-        public async Task<IActionResult> RemoveFromCart(RemoveFromCartCommand command)
+        [HttpPatch]
+        public async Task<IActionResult> RemoveFromCart(EditCartItemCommand itemCommand)
         {
-            return HandleResult(await Mediator.Send(command));
+            return HandleResult(await Mediator.Send(itemCommand));
         }        
         
         [Authorize]
@@ -36,6 +38,13 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteCart()
         {
             return HandleResult(await Mediator.Send(new DeleteCartCommand()));
+        }
+        
+        [Authorize]
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteCartItem(Guid id)
+        {
+            return HandleResult(await Mediator.Send(new DeleteCartItemCommand(id)));
         }
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,22 +8,22 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.Carts.RemoveFromCart
+namespace Application.Carts
 {
-    public record RemoveFromCartCommand(Guid ProductId, int Amount) : IRequest<ApiResult<Unit>>;
+    public record DeleteCartItemCommand(Guid ProductId) : IRequest<ApiResult<Unit>>;
 
-    public class RemoveFromCartCommandHandler : IRequestHandler<RemoveFromCartCommand, ApiResult<Unit>>
+    public class DeleteCartItemCommandHandler : IRequestHandler<DeleteCartItemCommand, ApiResult<Unit>>
     {
         private readonly DataContext _context;
         private readonly IAccountService _accountService;
 
-        public RemoveFromCartCommandHandler(DataContext context, IAccountService accountService)
+        public DeleteCartItemCommandHandler(DataContext context, IAccountService accountService)
         {
             _context = context;
             _accountService = accountService;
         }
 
-        public async Task<ApiResult<Unit>> Handle(RemoveFromCartCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<Unit>> Handle(DeleteCartItemCommand request, CancellationToken cancellationToken)
         {
             var account = await _accountService.GetAccountInfo();
 
@@ -32,21 +32,15 @@ namespace Application.Carts.RemoveFromCart
             //check if Product is in Cart
             var cartItem = await _context.Carts.Where(x => x.ClientId == account.Id)
                 .Where(x => x.ProductId == request.ProductId).FirstOrDefaultAsync(cancellationToken);
+            if (cartItem == null) return null;
 
-            //check if there are enough products in Cart
-            if (cartItem == null || cartItem.Amount < request.Amount)
-                return ApiResult<Unit>.Failure("Not enough units in Cart");
-
-            //delete or change amount in Cart
-            if (request.Amount == cartItem.Amount)
-                _context.Carts.Remove(cartItem);
-            else cartItem.Amount -= request.Amount;
+            _context.Remove(cartItem);
 
             var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
             return result
                 ? ApiResult<Unit>.Success(Unit.Value)
-                : ApiResult<Unit>.Failure("Failed to remove Product from Cart");
+                : ApiResult<Unit>.Failure("Failed to edit Product in Cart");
         }
     }
 }
