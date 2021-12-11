@@ -9,5 +9,6 @@ namespace API.DTOs
 
         public Guid ClientId { get; set; }
         public Guid VendorId { get; set; }
+        public Guid ContactId { get; set; }
     }
 }

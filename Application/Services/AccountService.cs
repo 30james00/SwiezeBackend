@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +45,11 @@ namespace Application.Services
                 AccountType = AccountType.Vendor,
                 Id = account.Vendor.Id
             };
+        }
+
+        public async Task<Guid> GetContactId(string userId)
+        {
+            return await _context.Contacts.Where(x => x.AccountId == userId).Select(x=>x.Id).FirstOrDefaultAsync();
         }
     }
 }
