@@ -12,7 +12,7 @@ namespace API.Controllers
 {
     public class ReviewsController : BaseApiController
     {
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<PagedList<ReviewDto>>> ListReviews([FromQuery] ReviewParams reviewParams,
             [FromQuery] SortingParams sortingParams)
