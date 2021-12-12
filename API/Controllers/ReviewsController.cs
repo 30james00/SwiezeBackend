@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Core;
 using Application.Reviews;
@@ -18,6 +19,13 @@ namespace API.Controllers
             [FromQuery] SortingParams sortingParams)
         {
             return HandlePagedResult(await Mediator.Send(new ListReviewQuery(reviewParams, sortingParams)));
+        }
+
+        [AllowAnonymous]
+        [HttpGet("vendor/{id:guid}")]
+        public async Task<ActionResult<List<ReviewDto>>> VendorReviews(Guid id)
+        {
+            return HandleResult(await Mediator.Send(new VendorReviewQuery(id)));
         }
 
         [Authorize]

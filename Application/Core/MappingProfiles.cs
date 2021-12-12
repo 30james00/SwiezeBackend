@@ -69,7 +69,6 @@ namespace Application.Core
             //Vendor
             CreateMap<Domain.Vendor, VendorDto>().ForMember(
                 x => x.ContactId, o => o.MapFrom(x => x.Account.Contact.Id));
-            ;
         }
     }
 }
