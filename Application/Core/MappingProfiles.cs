@@ -28,9 +28,10 @@ namespace Application.Core
 
             //Category
             CreateMap<Category, CategoryDto>();
-            
+
             //Client
-            CreateMap<Client, ClientDto>();
+            CreateMap<Client, ClientDto>().ForMember(
+                x => x.ContactId, o => o.MapFrom(x => x.Account.Contact.Id));
 
             //Contact
             CreateMap<Contact, ContactDto>();
@@ -64,9 +65,11 @@ namespace Application.Core
 
             //UnitType
             CreateMap<UnitType, UnitTypeDto>();
-            
+
             //Vendor
-            CreateMap<Domain.Vendor, VendorDto>();
+            CreateMap<Domain.Vendor, VendorDto>().ForMember(
+                x => x.ContactId, o => o.MapFrom(x => x.Account.Contact.Id));
+            ;
         }
     }
 }
