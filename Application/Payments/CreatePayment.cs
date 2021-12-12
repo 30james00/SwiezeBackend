@@ -41,7 +41,7 @@ namespace Application.Payments
             var value = 0;
             foreach (var orderItem in order.OrderItems)
             {
-                value += orderItem.Value;
+                value += orderItem.Value * orderItem.Amount;
             }
 
             return ApiResult<string>.Success(await _paymentsAccessor.Pay(value));

@@ -7,6 +7,7 @@ namespace Application.Services
     {
         public Task<AccountInfo> GetAccountInfo();
         public Task<AccountInfo> GetInfoFromUserId(string userId);
+        public Task<Guid> GetContactId(string userId);
     }
 
     public class AccountInfo

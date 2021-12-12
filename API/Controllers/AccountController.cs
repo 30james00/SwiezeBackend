@@ -198,6 +198,8 @@ namespace API.Controllers
                 accountDto.ClientId = accountInfo.Id;
             else accountDto.VendorId = accountInfo.Id;
 
+            accountDto.ContactId = await _accountService.GetContactId(account.Id);
+
             return accountDto;
         }
     }
