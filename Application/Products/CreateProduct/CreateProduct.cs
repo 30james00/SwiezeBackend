@@ -68,10 +68,10 @@ namespace Application.Products.CreateProduct
             };
 
             //add Photos
-            if (photos.Count != 0)
+            if(request.Photos != null)
                 foreach (var photoId in request.Photos)
                 {
-                    var photo = await _context.Photos.FindAsync(photoId);
+                    var photo = await _context.Photos.FirstOrDefaultAsync(x=>x.Id == photoId, cancellationToken);
                     //check if Photo exists
                     if (photo == null) return ApiResult<ProductDto>.Failure("Chosen Photo doesn't exist");
                     photos.Add(photo);
