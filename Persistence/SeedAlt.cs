@@ -16,23 +16,6 @@ namespace Persistence
             var random = new Random(58177474);
             Randomizer.Seed = new Random(58177474);
 
-            var cartCount = isCompact ? 5 : 50;
-            var categoryCount = isCompact ? 2 : 10;
-            var clientCount = isCompact ? 2 : 10;
-            var couponCount = isCompact ? 4 : 20;
-            var reviewCount = isCompact ? 3 : 30;
-            var orderCount = isCompact ? 5 : 50;
-            var orderItemCount = isCompact ? 10 : 100;
-            var productCount = isCompact ? 10 : 100;
-            var vendorCount = isCompact ? 2 : 10;
-
-            //private const int ContactCount = ClientCount + VendorCount;
-            var accountCount = clientCount + vendorCount;
-
-            var clientIndex = 1;
-            var contactIndex = 1;
-            var vendorIndex = 1 + clientCount;
-
             var carts = new List<Cart>();
             var categories = new List<Category>();
             var clients = new List<Client>();
@@ -63,6 +46,11 @@ namespace Persistence
                     {
                         UserName = "nowak",
                         Email = "contact@nowak.pl",
+                    },
+                    new Account
+                    {
+                        UserName = "tomasz",
+                        Email = "contact@tomasz.pl",
                     }
                 };
 
@@ -91,7 +79,8 @@ namespace Persistence
                 {
                     vendors = new List<Vendor>
                     {
-                        new Vendor { AccountId = users[1].Id, Name = "Gospodarstwo Rolne Adam Nowak", }
+                        new Vendor { AccountId = users[1].Id, Name = "Gospodarstwo Rolne Adam Nowak", },
+                        new Vendor { AccountId = users[2].Id, Name = "OwoceWarzywa", },
                     };
 
                     await context.Vendors.AddRangeAsync(vendors);
@@ -124,7 +113,18 @@ namespace Persistence
                             HouseNumber = "24",
                             FlatNumber = "1",
                             PostalCode = "21-500",
-                        }
+                        },
+                        new Contact
+                        {
+                            AccountId = users[2].Id,
+                            City = "Markuszów",
+                            Mail = "contact@tomasz.pl",
+                            Phone = "+48600100200",
+                            Street = "Turkusowa",
+                            Voivodeship = "Lubelskie",
+                            HouseNumber = "24",
+                            PostalCode = "20-500",
+                        },
                     };
 
                     await context.Contacts.AddRangeAsync(contacts);
@@ -193,6 +193,42 @@ namespace Persistence
                             Stock = 100,
                             Value = 1000,
                         },
+                        new Product
+                        {
+                            UnitTypeId = unitTypes[2].Id,
+                            VendorId = vendors[1].Id,
+                            Name = "Sałata",
+                            Unit = 100,
+                            Stock = 34,
+                            Value = 560,
+                        },
+                        new Product
+                        {
+                            UnitTypeId = unitTypes[0].Id,
+                            VendorId = vendors[1].Id,
+                            Name = "Pomidory",
+                            Unit = 40000,
+                            Stock = 100,
+                            Value = 899,
+                        },
+                        new Product
+                        {
+                            UnitTypeId = unitTypes[2].Id,
+                            VendorId = vendors[1].Id,
+                            Name = "Gruszki",
+                            Unit = 300,
+                            Stock = 40,
+                            Value = 1200,
+                        },
+                        new Product
+                        {
+                            UnitTypeId = unitTypes[0].Id,
+                            VendorId = vendors[1].Id,
+                            Name = "Rzodkiew",
+                            Unit = 20000,
+                            Stock = 100,
+                            Value = 500,
+                        },
                     };
 
                     await context.Products.AddRangeAsync(products);
@@ -246,6 +282,26 @@ namespace Persistence
                             {
                                 ProductId = products[4].Id,
                                 CategoryId = categories[1].Id,
+                            },
+                            new ProductCategory
+                            {
+                                ProductId = products[5].Id,
+                                CategoryId = categories[0].Id,
+                            },
+                            new ProductCategory
+                            {
+                                ProductId = products[6].Id,
+                                CategoryId = categories[0].Id,
+                            },
+                            new ProductCategory
+                            {
+                                ProductId = products[7].Id,
+                                CategoryId = categories[1].Id,
+                            },
+                            new ProductCategory
+                            {
+                                ProductId = products[8].Id,
+                                CategoryId = categories[0].Id,
                             },
                         };
 
@@ -318,7 +374,8 @@ namespace Persistence
                                     OrderId = orders[1].Id,
                                     NumberOfStars = 5,
                                     CreationTime = DateTime.Now.Subtract(TimeSpan.FromDays(10)),
-                                }
+                                    Description = "Wyśmienite produkty",
+                                },
                             };
 
                             await context.Reviews.AddRangeAsync(reviews);
@@ -332,13 +389,15 @@ namespace Persistence
                                 new()
                                 {
                                     Id = "xszgswvrn2pxr37zsrgl",
-                                    Url = "https://res.cloudinary.com/sbinato/image/upload/v1639404445/xszgswvrn2pxr37zsrgl.jpg",
+                                    Url =
+                                        "https://res.cloudinary.com/sbinato/image/upload/v1639404445/xszgswvrn2pxr37zsrgl.jpg",
                                     ProductId = products[0].Id
                                 },
                                 new()
                                 {
                                     Id = "uvlje7cxn0uimxw8ivrx",
-                                    Url = "https://res.cloudinary.com/sbinato/image/upload/v1639404528/uvlje7cxn0uimxw8ivrx.png",
+                                    Url =
+                                        "https://res.cloudinary.com/sbinato/image/upload/v1639404528/uvlje7cxn0uimxw8ivrx.png",
                                     ProductId = products[1].Id
                                 },
                                 // new()
@@ -350,14 +409,37 @@ namespace Persistence
                                 new()
                                 {
                                     Id = "ushymktdf4tq6txdexv1",
-                                    Url = "https://res.cloudinary.com/sbinato/image/upload/v1639404769/ushymktdf4tq6txdexv1.jpg",
+                                    Url =
+                                        "https://res.cloudinary.com/sbinato/image/upload/v1639404769/ushymktdf4tq6txdexv1.jpg",
                                     ProductId = products[3].Id
                                 },
                                 new()
                                 {
                                     Id = "l88glrdgclsswjpwaxxj",
-                                    Url = "https://res.cloudinary.com/sbinato/image/upload/v1639404598/l88glrdgclsswjpwaxxj.jpg",
+                                    Url =
+                                        "https://res.cloudinary.com/sbinato/image/upload/v1639404598/l88glrdgclsswjpwaxxj.jpg",
                                     ProductId = products[4].Id
+                                },
+                                new()
+                                {
+                                    Id = "bdy3gqhtpz84cd4mtse0",
+                                    Url =
+                                        "https://res.cloudinary.com/sbinato/image/upload/v1640207437/bdy3gqhtpz84cd4mtse0.jpg",
+                                    ProductId = products[5].Id
+                                },
+                                new()
+                                {
+                                    Id = "w5rj9szeeudean1hetvs",
+                                    Url =
+                                        "https://res.cloudinary.com/sbinato/image/upload/v1640207405/w5rj9szeeudean1hetvs.jpg",
+                                    ProductId = products[6].Id
+                                },
+                                new()
+                                {
+                                    Id = "dk6rbhsevefwqac2jhjk",
+                                    Url =
+                                        "https://res.cloudinary.com/sbinato/image/upload/v1640207346/dk6rbhsevefwqac2jhjk.jpg",
+                                    ProductId = products[7].Id
                                 },
                             };
                             await context.Photos.AddRangeAsync(photos);

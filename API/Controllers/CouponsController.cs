@@ -41,10 +41,10 @@ namespace API.Controllers
         }
 
         [Authorize]
-        [HttpGet("validate")]
-        public async Task<ActionResult<CouponDto>> ValidateCoupon(ValidateCouponQuery query)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CouponDto>> ValidateCoupon(string id)
         {
-            return HandleResult(await Mediator.Send(query));
+            return HandleResult(await Mediator.Send(new ValidateCouponQuery(id)));
         }
     }
 }
