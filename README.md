@@ -1,4 +1,4 @@
-# Swieze.pl Backend
+# Swieze Backend
 
 ![.NET Action badge](https://github.com/30james00/swiezebackend/actions/workflows/dotnet.yml/badge.svg)
 
